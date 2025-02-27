@@ -1,0 +1,15 @@
+@startuml
+
+actor User
+participant "Auth Controller" as Auth
+participant "Database" as DB
+participant "JWT Service" as JWT
+
+User -> Auth : Sends login request (email, password)
+Auth -> DB : Finds user by email
+DB --> Auth : Returns user data
+
+Auth -> User : Check password
+User -> Auth : Sends password for verification
+
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+left to right direction
+actor "User" as user
+
+rectangle "Massage Shop System" {
+    usecase "Register" as register
+    usecase "View All\nMassage Shop" as viewAllMassageShop
+    usecase "View Single\nMassage Shop" as viewSingleMassageShop
+    usecase "Manage\nReservation\n(add, update, delete)" as manageReservation
+    usecase "Manage\nMassage Shop\n(create, update, delete)" as manageMassageShop
+    usecase "Login/Logout" as logInLogOut
+    usecase "View All\nReservation" as viewAllReservation
+    usecase "View Single\nReservation" as viewSingleReservation
+}
+
+user -- register
+user -- viewAllMassageShop
+user -- manageReservation
+user -- logInLogOut
+user -- viewSingleMassageShop
+user -- viewAllReservation
+user -- viewSingleReservation
+
+actor "Admin" as admin 
+register -- admin
+manageMassageShop -- admin
+manageReservation -- admin
+logInLogOut -- admin
+viewAllMassageShop -- admin
+viewSingleMassageShop -- admin
+viewAllReservation -- admin
+viewSingleReservation -- admin
+
+@enduml

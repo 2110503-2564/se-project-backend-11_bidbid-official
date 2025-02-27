@@ -1,0 +1,39 @@
+@startuml
+entity "User" as user {
+    *user_id : ObjectId <<generated>>
+    --
+    *name : String
+    *email : String <<unique>>
+    *phoneNumber : String <<unique>>
+    role : String <<default: user>>
+    password : String
+    resetPasswordToken : String
+    resetPasswordExpire : Date
+    createdAt : Date <<default: now>>
+}
+
+entity "MassageShop" as shop {
+    *shop_id : ObjectId <<generated>>
+    --
+    *name : String <<unique>>
+    *address : String
+    *priceRange : String
+    phoneNumber : String
+    *openTime : String
+    *closeTime : String
+}
+
+entity "Reservation" as reservation {
+    *reservation_id : ObjectId <<generated>>
+    --
+    *reservationDate : Date
+    *user_id : ObjectId <<FK>>
+    *massageShop_id : ObjectId <<FK>>
+    createdAt : Date <<default: now>>
+}
+
+' Relationships
+user ||--o{ reservation : "reserves"
+shop ||--o{ reservation : "at"
+
+@enduml

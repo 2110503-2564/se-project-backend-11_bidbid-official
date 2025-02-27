@@ -1,0 +1,38 @@
+@startuml
+
+class User {
+  +name: String
+  +email: String
+  +phoneNumber: String
+  +role: String
+  +password: String
+  +resetPasswordToken: String
+  +resetPasswordExpire: Date
+  +createdAt: Date
+  --
+  +getSignedJwtToken()
+  +matchPassword()
+}
+
+class Reservation {
+  +reservationDate: Date
+  +user: User
+  +massageShop: MassageShop
+  +createdAt: Date
+}
+
+class MassageShop {
+  +name: String
+  +address: String
+  +priceRange: String
+  +phoneNumber: String
+  +openTime: String
+  +closeTime: String
+}
+
+
+' Relationships
+User "1" -- "M" Reservation : reserves >
+Reservation "M" -- "1" MassageShop : at >
+
+@enduml

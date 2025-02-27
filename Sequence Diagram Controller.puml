@@ -1,0 +1,22 @@
+@startuml
+
+actor User
+participant "Reservation Controller" as Controller
+participant "Massage Shop Service" as Service
+participant "Database" as DB
+
+User -> Controller : Requests to reserve a massage
+Controller -> Service : Fetch available massage shops
+Service -> DB : Retrieve massage shop list
+DB --> Service : Returns massage shop data
+Service --> Controller : Sends massage shop list
+Controller --> User : Displays available massage shops
+
+User -> Controller : Selects shop & reservation date
+Controller -> Service : Check availability
+Service -> DB : Retrieve availability status
+DB --> Service : Returns availability status
+Service --> Controller : Sends availability status
+Controller --> User : Displays availability confirmation
+
+@enduml
