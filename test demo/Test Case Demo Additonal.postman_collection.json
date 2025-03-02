@@ -56,7 +56,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\" : \"User007 Doe\",\r\n    \"email\" : \"user007doe@gmail.com\",\r\n    \"phoneNumber\" : \"{{$randomPhoneNumber}}\",\r\n    \"password\" : \"12345678\",\r\n    \"role\" : \"user\"\r\n}",
+					"raw": "{\r\n    \"name\" : \"User011 Doe\",\r\n    \"email\" : \"user011doe@gmail.com\",\r\n    \"phoneNumber\" : \"{{$randomPhoneNumber}}\",\r\n    \"password\" : \"12345678\",\r\n    \"role\" : \"user\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -162,7 +162,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "\r\n{\r\n   \"email\" : \"user007doe@gmail.com\",\r\n    \"password\" : \"12345678\"\r\n}",
+					"raw": "\r\n{\r\n   \"email\" : \"user011doe@gmail.com\",\r\n    \"password\" : \"12345678\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -277,7 +277,7 @@
 							"pm.environment.set(\"review_ID\", new_review_id);\r",
 							"pm.globals.set(\"global_review_ID\", new_review_id);\r",
 							"\r",
-							"pm.execution.setNextRequest(\"Create Review for Admin\");"
+							"pm.execution.setNextRequest(\"Create Review Error\");"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -341,10 +341,6 @@
 							"});\r",
 							"\r",
 							"const response = pm.response.json();\r",
-							"const new_review_id = response.data._id;\r",
-							"\r",
-							"pm.environment.set(\"review_ID\", new_review_id);\r",
-							"pm.globals.set(\"global_review_ID\", new_review_id);\r",
 							"\r",
 							"pm.execution.setNextRequest(\"Create Review for Admin\");"
 						],
