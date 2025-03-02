@@ -97,7 +97,7 @@ exports.getMassageShop = async (req, res, next) => {
 //@access Private
 exports.createMassageShop = async (req, res, next) => {
     // console.log(req.body);
-    const massageShop = await MassageShop.create(req.body);
+    const massageShop = await MassageShop.create(req.body);-
     res.status(201).json({ success: true, data: massageShop });
 };
 

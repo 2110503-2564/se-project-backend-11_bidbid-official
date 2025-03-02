@@ -1,0 +1,922 @@
+{
+	"info": {
+		"_postman_id": "953e1f9c-a053-47b3-83e0-5a59e98fde5f",
+		"name": "Test Case Demo Massage Shop",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "38268732"
+	},
+	"item": [
+		{
+			"name": "Register User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Fixed TypeError by checking for the presence of 'data' property\r",
+							"pm.environment.set(\"TOKEN\", pm.response.json().token);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.json();\r",
+							"const new_user_id = response.data ? response.data.id : null; // Check for the presence of 'data' property\r",
+							"// console.log(\"Full Response:\", response);\r",
+							"\r",
+							"pm.environment.set(\"user_ID\", new_user_id);\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Login User\");\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "JSON Type",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"User128 Doe\",\r\n    \"email\" : \"user128doe@gmail.com\",\r\n    \"phoneNumber\" : \"{{$randomPhoneNumber}}\",\r\n    \"password\" : \"12345678\",\r\n    \"role\" : \"user\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/api/v1/auth/register",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"TOKEN\", pm.response.json().token);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// const response = pm.response.json();\r",
+							"// const new_user_id = response.data.id;\r",
+							"\r",
+							"// pm.globals.set(\"global_user_ID\", new_user_id);\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Get All MassageShops\");\r",
+							"\r",
+							"\r",
+							"// let response;\r",
+							"// try {\r",
+							"//     response = pm.response.json();\r",
+							"// } catch (e) {\r",
+							"//     console.log(\"Error parsing JSON response:\", e);\r",
+							"//     return; // Stop execution if JSON parsing fails\r",
+							"// }\r",
+							"\r",
+							"// // Ensure response contains expected fields\r",
+							"// if (response.token) {\r",
+							"//     pm.environment.set(\"TOKEN\", response.token);\r",
+							"// } else {\r",
+							"//     console.log(\"Warning: Token not found in response.\");\r",
+							"// }\r",
+							"\r",
+							"// // Status code check\r",
+							"// pm.test(\"Status code is 200\", function () {\r",
+							"//     pm.response.to.have.status(200);\r",
+							"// });\r",
+							"\r",
+							"// // Extract user ID safely\r",
+							"// if (response.data && response.data.id) {\r",
+							"//     pm.environment.set(\"global_user_ID\", response.data.id); // Use environment variable\r",
+							"// } else {\r",
+							"//     console.log(\"Warning: User ID not found in response.\");\r",
+							"// }\r",
+							"\r",
+							"// // Set next request only if user ID exists\r",
+							"// if (pm.environment.get(\"global_user_ID\")) {\r",
+							"//     pm.execution.setNextRequest(\"Get All MassageShops\");\r",
+							"// } else {\r",
+							"//     console.log(\"Stopping execution: No valid user ID found.\");\r",
+							"//     pm.execution.setNextRequest(null); // Stops execution if no valid ID\r",
+							"// }\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "JSON Type",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n{\r\n   \"email\" : \"user128doe@gmail.com\",\r\n    \"password\" : \"12345678\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/api/v1/auth/login",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All MassageShops",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Add Reserve User\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/api/v1/massageShops",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"massageShops"
+					]
+				},
+				"description": "Fetch all from database"
+			},
+			"response": []
+		},
+		{
+			"name": "Add Reserve User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"}); \r",
+							"\r",
+							"pm.execution.setNextRequest(\"Add Reserve User2\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "JSON Type",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reservationDate\": \"{{$randomDatePast}}\",\r\n    \"user\" : \"{{user_ID}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/api/v1/massageShops/67bf305ae9e075abdb4cd5f3/reservations",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"massageShops",
+						"67bf305ae9e075abdb4cd5f3",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Reserve User2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"}); \r",
+							"\r",
+							"pm.execution.setNextRequest(\"Add Reserve User3\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "JSON Type",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reservationDate\": \"{{$randomDatePast}}\",\r\n    \"user\" : \"{{user_ID}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/api/v1/massageShops/67bf305ae9e075abdb4cd5f3/reservations",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"massageShops",
+						"67bf305ae9e075abdb4cd5f3",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Reserve User3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"}); \r",
+							"\r",
+							"const response = pm.response.json();\r",
+							"const reserve_id = response.data ? response.data._id : null; \r",
+							"\r",
+							"if (reserve_id) {\r",
+							"    pm.environment.set(\"reserve_ID\", reserve_id); \r",
+							"    console.log(\"Successfully stored reserve_ID:\", reserve_id);\r",
+							"} else {\r",
+							"    console.error(\"Error: reserve_ID not found in response\", response);\r",
+							"    throw new Error(\"reserve_ID not found in response.\");\r",
+							"}\r",
+							"\r",
+							"// pm.environment.set(\"reserve_ID\", reserve_id);\r",
+							"// pm.globals.set(\"global_reserve_ID\", reserve_id);\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Add Reserve User4 Error\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "JSON Type",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reservationDate\": \"{{$randomDatePast}}\",\r\n    \"user\" : \"{{user_ID}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/api/v1/massageShops/67bf305ae9e075abdb4cd5f3/reservations",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"massageShops",
+						"67bf305ae9e075abdb4cd5f3",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Reserve User4 Error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"}); \r",
+							"\r",
+							"pm.execution.setNextRequest(\"Update Reserve\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "JSON Type",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"reservationDate\": \"{{$randomDatePast}}\",\r\n    \"user\" : \"{{user_ID}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/api/v1/massageShops/67bf305ae9e075abdb4cd5f3/reservations",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"massageShops",
+						"67bf305ae9e075abdb4cd5f3",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Reserve",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let reserve_id = pm.environment.get(\"reserve_ID\");\r",
+							"\r",
+							"if (!reserve_id) {\r",
+							"    throw new Error(\"reserve_ID is missing. Ensure 'Add Reserve User3' ran successfully.\");\r",
+							"}\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Delete Reserve\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// let reserve_id = pm.environment.get(\"reserve_ID\");\r",
+							"\r",
+							"// if (!reserve_id) {\r",
+							"//     throw new Error(\"reserve_ID is missing. Ensure 'Add Reserve User3' ran successfully.\");\r",
+							"// }\r",
+							"\r",
+							"// // Dynamically add reserve_ID to request params\r",
+							"// pm.request.url.query.add({ key: \"reserve_ID\", value: reserve_id });\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": "JSON Type",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"hospital\" : \"67b809041fccba609b3746fe\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/api/v1/reservations/{{reserve_ID}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"reservations",
+						"{{reserve_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Reserve",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"let reserve_id = pm.environment.get(\"reserve_ID\");\r",
+							"\r",
+							"if (!reserve_id) {\r",
+							"    throw new Error(\"reserve_ID is missing. Ensure 'Add Reserve User3' ran successfully.\");\r",
+							"}\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Logout\")"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// let reserve_id = pm.environment.get(\"reserve_ID\");\r",
+							"\r",
+							"// if (!reserve_id) {\r",
+							"//     throw new Error(\"reserve_ID is missing. Ensure 'Add Reserve User3' ran successfully.\");\r",
+							"// }\r",
+							"\r",
+							"// // Dynamically add reserve_ID to request params\r",
+							"// pm.request.url.query.add({ key: \"reserve_ID\", value: reserve_id });\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/api/v1/reservations/{{reserve_ID}}",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"reservations",
+						"{{reserve_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"TOKEN\", null);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Login Admin\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/api/v1/auth/logout",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login Admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"TOKEN\", pm.response.json().token);\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.json();\r",
+							"const admin_id = response.data ? response.data.id : null; // Check for the presence of 'data' property\r",
+							"\r",
+							"pm.globals.set(\"admin_ID\", admin_id);\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Admin Get All Reserve\");\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\" : \"johndoe@gmail.com\",\r\n    \"password\" : \"12345678\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/api/v1/auth/login",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin Get All Reserve",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"let responseData = pm.response.json(); // Parse the JSON response\r",
+							"\r",
+							"if (Array.isArray(responseData) && responseData.length > 0) {\r",
+							"    let firstID = responseData[0].id; // Get the ID of the first item\r",
+							"    if (!pm.globals.has(\"global_reserve_ID\")) { // Only set if globalID is not already set\r",
+							"        pm.globals.set(\"global_reserve_ID\", firstID);\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Admin Update Reserve\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/api/v1/reservations",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"reservations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin Update Reserve",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.execution.setNextRequest(\"Admin Delete Reserve\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/api/v1/reservations/:reserveId",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"reservations",
+						":reserveId"
+					],
+					"variable": [
+						{
+							"key": "reserveId",
+							"value": "67c46ac1f45619a6870f7c2a"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin Delete Reserve",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.execution.setNextRequest(null);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/api/v1/reservations/:reserveId",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"reservations",
+						":reserveId"
+					],
+					"variable": [
+						{
+							"key": "reserveId",
+							"value": "67c46ac1f45619a6870f7c2a"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
