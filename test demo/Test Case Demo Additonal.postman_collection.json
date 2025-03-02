@@ -322,7 +322,76 @@
 					"variable": [
 						{
 							"key": "massageShopId",
-							"value": "{{global_hospital_ID}}"
+							"value": "{{global_massage_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Review Error",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"const response = pm.response.json();\r",
+							"const new_review_id = response.data._id;\r",
+							"\r",
+							"pm.environment.set(\"review_ID\", new_review_id);\r",
+							"pm.globals.set(\"global_review_ID\", new_review_id);\r",
+							"\r",
+							"pm.execution.setNextRequest(\"Create Review for Admin\");"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{TOKEN}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"rating\": 5, \r\n    \"comment\": \"Good Massage!\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL}}/api/v1/massageShops/:massageShopId/reviews/",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"massageShops",
+						":massageShopId",
+						"reviews",
+						""
+					],
+					"variable": [
+						{
+							"key": "massageShopId",
+							"value": "{{global_massage_ID}}"
 						}
 					]
 				}
