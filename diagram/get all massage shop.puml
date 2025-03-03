@@ -1,0 +1,22 @@
+@startuml
+title Get All Massage Shops
+
+actor Client
+participant "«JavaScript»\n:server" as Server
+participant "«Router»\n:massageShops" as Router
+participant "«Controller»\n:MassageShopController" as Controller
+participant "«Model»\n:MassageShop" as Model
+database "«MongoDB»\n:massage_shops" as Database
+
+Client -> Server: req.get("/api/v1/massageShops")
+Server -> Router: app.use("/api/v1/massageShops", massageShops)
+Router -> Controller: getMassageShops()
+Controller -> Model: find({})
+Model -> Database: fetch all massage shops
+Database -> Model: return massage shop data
+Model -> Controller: return massage shop list
+Controller -> Router: return massage shop list
+Router -> Server: return massage shop list
+Server -> Client: response with massage shop list
+
+@enduml

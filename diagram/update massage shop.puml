@@ -1,0 +1,25 @@
+@startuml
+title Update Massage Shop
+
+actor Client
+participant "«JavaScript»\n:server" as Server
+participant "«Router»\n:massageShops" as Router
+participant "«Middleware»\n:auth" as Middleware
+participant "«Controller»\n:MassageShopController" as Controller
+participant "«Model»\n:MassageShop" as Model
+database "«MongoDB»\n:massage_shops" as Database
+
+Client -> Server: req.put("/api/v1/massageShops/:id")
+Server -> Router: app.use("/api/v1/massageShops", massageShops)
+Router -> Middleware: protect, authorize("admin")
+Middleware -> Router: authorize success
+Router -> Controller: updateMassageShop(req.params.id, req.body)
+Controller -> Model: findByIdAndUpdate(req.params.id, req.body)
+Model -> Database: update massage shop data
+Database -> Model: return updated massage shop
+Model -> Controller: return updated massage shop data
+Controller -> Router: return updated massage shop data
+Router -> Server: return updated massage shop data
+Server -> Client: response with updated massage shop
+
+@enduml

@@ -1,0 +1,22 @@
+@startuml
+title Get Single Reservation
+
+actor Client
+participant "«JavaScript»\n:server" as Server
+participant "«Router»\n:reservations" as Router
+participant "«Controller»\n:ReservationController" as Controller
+participant "«Model»\n:Reservation" as Model
+database "«MongoDB»\n:reservations" as Database
+
+Client -> Server: req.get("/api/v1/reservations/:id")
+Server -> Router: app.use("/api/v1/reservations", reservations)
+Router -> Controller: getReservation(req.params.id)
+Controller -> Model: findById(req.params.id)
+Model -> Database: fetch reservation by ID
+Database -> Model: return reservation data
+Model -> Controller: return reservation data
+Controller -> Router: return reservation data
+Router -> Server: return reservation data
+Server -> Client: response with reservation details
+
+@enduml

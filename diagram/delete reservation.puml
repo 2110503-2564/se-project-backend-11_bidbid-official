@@ -1,0 +1,27 @@
+@startuml
+title Delete Reservation
+
+actor Client
+participant "«JavaScript»\n:server" as Server
+participant "«Router»\n:reservations" as Router
+participant "«Middleware»\n:auth" as Middleware
+participant "«Controller»\n:ReservationController" as Controller
+participant "«Model»\n:Reservation" as Model
+database "«MongoDB»\n:reservations" as Database
+
+Client -> Server: req.delete("/api/v1/reservations/:id")
+Server -> Router: app.use("/api/v1/reservations", reservations)
+Router -> Middleware: protect()
+Middleware -> Router: authentication success
+Router -> Middleware: authorize("admin")
+Middleware -> Router: authorization success
+Router -> Controller: deleteReservation(req.params.id)
+Controller -> Model: findByIdAndDelete(req.params.id)
+Model -> Database: delete reservation data
+Database -> Model: confirm deletion
+Model -> Controller: success response
+Controller -> Router: success response
+Router -> Server: success response
+Server -> Client: response with delete confirmation
+
+@enduml

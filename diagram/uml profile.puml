@@ -1,0 +1,66 @@
+@startuml
+left to right direction
+package "MassageShopReservationProfile" {
+    
+    ' Define the Main Application Service
+    class "<<Application>>\nMassageShopReservationService" as MassageShopReservationService {}
+
+    ' Define Resources
+    class "<<Resource>>\nMassageShops" as ResourceMassageShops {
+        <<GET>> +getMassageShops(): List<MassageShop>
+        <<POST>> +createMassageShop(): MassageShop
+    }
+
+    class "<<Resource>>\nMassageShop" as ResourceMassageShop {
+        <<GET>> +getMassageShop(): MassageShop
+        <<PUT>> +updateMassageShop(): MassageShop
+        <<DELETE>> +deleteMassageShop(): void
+    }
+
+    class "<<Resource>>\nReservations" as ResourceReservations {
+        <<GET>> +getReservations(): List<Reservation>
+        <<POST>> +createReservation(): Reservation
+    }
+
+    class "<<Resource>>\nReservation" as ResourceReservation {
+        <<GET>> +getReservation(): Reservation
+        <<PUT>> +updateReservation(): Reservation
+        <<DELETE>> +cancelReservation(): void
+    }
+
+    ' Define Representations
+    class "<<Representation>>\nMassageShop" as RepresentationMassageShop {
+        - name: string
+        - address: string
+        - telephone: string
+        - createdAt: Date
+    }
+
+    class "<<Representation>>\nReservation" as RepresentationReservation {
+        - reservationDate: Date
+        - duration: number (1-3 hours)
+        - userId: ObjectId
+        - massageShopId: ObjectId
+        - createdAt: Date
+    }
+
+    class "<<Representation>>\nUser" as RepresentationUser {
+        - name: string
+        - email: string
+        - phone: string
+        - role: "user" | "admin"
+        - createdAt: Date
+    }
+}
+
+' Define Paths between Components
+MassageShopReservationService ..> ResourceMassageShops: "/massageShops\n<<Path>>"
+ResourceMassageShops ..> ResourceMassageShop: "/{massageShopId}\n<<Path>>"
+ResourceMassageShop ..> RepresentationMassageShop: "<<use>>"
+
+MassageShopReservationService ..> ResourceReservations: "/reservations\n<<Path>>"
+ResourceReservations ..> ResourceReservation: "/{reservationId}\n<<Path>>"
+ResourceReservation ..> RepresentationReservation: "<<use>>"
+ResourceReservation ..> RepresentationUser: "<<use>>"
+
+@enduml

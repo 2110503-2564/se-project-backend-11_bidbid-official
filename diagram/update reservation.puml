@@ -1,0 +1,27 @@
+@startuml
+title Update Reservation
+
+actor Client
+participant "«JavaScript»\n:server" as Server
+participant "«Router»\n:reservations" as Router
+participant "«Middleware»\n:auth" as Middleware
+participant "«Controller»\n:ReservationController" as Controller
+participant "«Model»\n:Reservation" as Model
+database "«MongoDB»\n:reservations" as Database
+
+Client -> Server: req.put("/api/v1/reservations/:id")
+Server -> Router: app.use("/api/v1/reservations", reservations)
+Router -> Middleware: protect()
+Middleware -> Router: authentication success
+Router -> Middleware: authorize("admin")
+Middleware -> Router: authorization success
+Router -> Controller: updateReservation(req.params.id, req.body)
+Controller -> Model: findByIdAndUpdate(req.params.id, req.body)
+Model -> Database: update reservation data
+Database -> Model: return updated reservation
+Model -> Controller: return updated reservation data
+Controller -> Router: return updated reservation data
+Router -> Server: return updated reservation data
+Server -> Client: response with updated reservation
+
+@enduml

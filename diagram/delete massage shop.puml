@@ -1,0 +1,25 @@
+@startuml
+title Delete Massage Shop
+
+actor Client
+participant "«JavaScript»\n:server" as Server
+participant "«Router»\n:massageShops" as Router
+participant "«Middleware»\n:auth" as Middleware
+participant "«Controller»\n:MassageShopController" as Controller
+participant "«Model»\n:MassageShop" as Model
+database "«MongoDB»\n:massageShops" as Database
+
+Client -> Server: req.delete("/api/v1/massageShops/:id")
+Server -> Router: app.use("/api/v1/massageShops", massageShops)
+Router -> Middleware: protect, authorize("admin")
+Middleware -> Router: authorize success
+Router -> Controller: deleteMassageShop(req.params.id)
+Controller -> Model: findByIdAndDelete(req.params.id)
+Model -> Database: delete massage shop data
+Database -> Model: confirm deletion
+Model -> Controller: success response
+Controller -> Router: success response
+Router -> Server: success response
+Server -> Client: response with delete confirmation
+
+@enduml

@@ -1,0 +1,22 @@
+@startuml
+title Create Reservation
+
+actor Client
+participant "«JavaScript»\n:server" as Server
+participant "«Router»\n:reservations" as Router
+participant "«Controller»\n:ReservationController" as Controller
+participant "«Model»\n:Reservation" as Model
+database "«MongoDB»\n:reservations" as Database
+
+Client -> Server: req.post("/api/v1/reservations")
+Server -> Router: app.use("/api/v1/reservations", reservations)
+Router -> Controller: addReservation(req.body)
+Controller -> Model: create(req.body)
+Model -> Database: save(new Reservation)
+Database -> Model: stored reservation data
+Model -> Controller: return new reservation data
+Controller -> Router: return new reservation data
+Router -> Server: return new reservation data
+Server -> Client: response with new reservation
+
+@enduml

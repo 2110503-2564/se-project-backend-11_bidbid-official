@@ -4,13 +4,16 @@ title Manage Massage Shop
 actor Client
 participant "«JavaScript»\n:server" as Server
 participant "«Router»\n:massageShops" as Router
+participant "«Middleware»\n:auth" as Middleware
 participant "«Controller»\n:MassageShopController" as Controller
 participant "«Model»\n:MassageShop" as Model
 database "«MongoDB»\n:massageShops" as DB
 
 Client -> Server : req.post('/api/v1/massageShops')
 Server -> Router : app.use('/api/v1/massageShops', massageShops)
-Router -> Controller : addMassageShop(req)
+Router -> Middleware: authorize("admin")
+Middleware -> Router: authorization success
+Router -> Controller: updateReservation(req.params.id, req.body)
 Controller -> Model : create(req.body)
 Model -> DB : save(new MassageShop)
 DB --> Model : stored massage shop data

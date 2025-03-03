@@ -1,0 +1,22 @@
+@startuml
+title Create Massage Shop
+
+actor Client
+participant "«JavaScript»\n:server" as Server
+participant "«Router»\n:massage_shops" as Router
+participant "«Controller»\n:MassageShopController" as Controller
+participant "«Model»\n:MassageShop" as Model
+database "«MongoDB»\n:massage_shops" as Database
+
+Client -> Server: req.post("/api/v1/massage_shops")
+Server -> Router: app.use("/api/v1/massage_shops", massage_shops)
+Router -> Controller: addMassageShop(req)
+Controller -> Model: create(req.body)
+Model -> Database: save(new MassageShop)
+Database -> Model: stored massage shop data
+Model -> Controller: return massage shop data
+Controller -> Router: return massage shop data
+Router -> Server: return massage shop data
+Server -> Client: response with new massage shop
+
+@enduml
