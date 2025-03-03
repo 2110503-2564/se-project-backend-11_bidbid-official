@@ -7,7 +7,6 @@ const MassageShop = require('../models/MassageShop');
 exports.getReservations = async (req, res, next) => {
     let query;
 
-    // General users can see only their reservations
     if (req.user.role !== 'admin') {
         query = Reservation.find({ user: req.user.id }).populate({
             path: 'massageShop',
@@ -80,13 +79,11 @@ exports.addReservation = async (req, res, next) => {
             return res.status(404).json({ success: false, message: `No massage shop with the id of ${req.params.massageShopId}` });
         }
 
-        // Add user Id to req.body
         req.body.user = req.user.id;
 
-        // Check for existing reservations
         const existingReservations = await Reservation.find({ user: req.user.id });
 
-        // If the user is not an admin, they can only create 3 reservations.
+
         if (existingReservations.length >= 3 && req.user.role !== 'admin') {
             return res.status(400).json({
                 success: false,
@@ -117,7 +114,6 @@ exports.updateReservation = async (req, res, next) => {
             return res.status(404).json({ success: false, message: `No reservation with id of ${req.params.id}` });
         }
 
-        // Make sure user is the reservation owner
         if (reservation.user.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({ success: false, message: `User ${req.user.id} is not authorized to update this reservation` });
         }

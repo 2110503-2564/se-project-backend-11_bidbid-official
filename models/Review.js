@@ -27,7 +27,6 @@ const ReviewSchema = new mongoose.Schema({
     }
 });
 
-// Calculate average rating for a shop
 ReviewSchema.statics.getAverageRating = async function(shopId) {
     const obj = await this.aggregate([
         { $match: { massageShop: shopId } },
@@ -43,7 +42,6 @@ ReviewSchema.statics.getAverageRating = async function(shopId) {
     }
 };
 
-// Update the rating whenever a review is added
 ReviewSchema.post('save', function() {
     this.constructor.getAverageRating(this.massageShop);
 });

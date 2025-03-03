@@ -59,13 +59,11 @@ exports.addReview = async (req, res, next) => {
         req.body.massageShop = req.params.massageShopId;
         req.body.user = req.user.id;
 
-        // Check if the massage shop exists
         const massageShop = await MassageShop.findById(req.params.massageShopId);
         if (!massageShop) {
             return res.status(404).json({ success: false, message: "Massage shop not found" });
         }
 
-        // Check if the user has already reviewed this massage shop
         const existingReview = await Review.findOne({ 
             user: req.user.id, 
             massageShop: req.params.massageShopId 
@@ -78,7 +76,6 @@ exports.addReview = async (req, res, next) => {
             });
         }
 
-        // Create a new review
         const review = await Review.create(req.body);
 
         res.status(201).json({
@@ -103,12 +100,10 @@ exports.updateReview = async (req, res, next) => {
             return res.status(404).json({ success: false, message: "Review not found" });
         }
 
-        // Allow review owner or admin to update
         if (review.user.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({ success: false, message: "Not authorized to update this review" });
         }
 
-        // Update only allowed fields
         if (req.body.rating) review.rating = req.body.rating;
         if (req.body.comment) review.comment = req.body.comment;
 
@@ -136,7 +131,6 @@ exports.deleteReview = async (req, res, next) => {
             return res.status(404).json({ success: false, message: "Review not found" });
         }
 
-        // Ensure the user owns the review or is an admin
         if (review.user.toString() !== req.user.id && req.user.role !== 'admin') {
             return res.status(401).json({ success: false, message: "Not authorized to delete this review" });
         }
