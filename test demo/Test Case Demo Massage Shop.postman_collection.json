@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "e20f9337-f0c2-4df6-b321-0ecb8f7b3ce5",
+		"_postman_id": "953e1f9c-a053-47b3-83e0-5a59e98fde5f",
 		"name": "Test Case Demo Massage Shop",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "42449383"
+		"_exporter_id": "38268732"
 	},
 	"item": [
 		{
@@ -13,7 +13,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"\r",
+							"// Fixed TypeError by checking for the presence of 'data' property\r",
 							"pm.environment.set(\"TOKEN\", pm.response.json().token);\r",
 							"\r",
 							"pm.test(\"Status code is 200\", function () {\r",
@@ -21,7 +21,8 @@
 							"});\r",
 							"\r",
 							"const response = pm.response.json();\r",
-							"const new_user_id = response.data ? response.data.id : null; \r",
+							"const new_user_id = response.data ? response.data.id : null; // Check for the presence of 'data' property\r",
+							"// console.log(\"Full Response:\", response);\r",
 							"\r",
 							"pm.environment.set(\"user_ID\", new_user_id);\r",
 							"\r",
@@ -55,7 +56,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\" : \"User128 Doe\",\r\n    \"email\" : \"user128doe@gmail.com\",\r\n    \"phoneNumber\" : \"{{$randomPhoneNumber}}\",\r\n    \"password\" : \"12345678\",\r\n    \"role\" : \"user\"\r\n}",
+					"raw": "{\r\n    \"name\" : \"User141 Doe\",\r\n    \"email\" : \"user141doe@gmail.com\",\r\n    \"phoneNumber\" : \"{{$randomPhoneNumber}}\",\r\n    \"password\" : \"12345678\",\r\n    \"role\" : \"user\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -90,7 +91,48 @@
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
 							"\r",
+							"// const response = pm.response.json();\r",
+							"// const new_user_id = response.data.id;\r",
+							"\r",
+							"// pm.globals.set(\"global_user_ID\", new_user_id);\r",
+							"\r",
 							"pm.execution.setNextRequest(\"Get All MassageShops\");\r",
+							"\r",
+							"\r",
+							"// let response;\r",
+							"// try {\r",
+							"//     response = pm.response.json();\r",
+							"// } catch (e) {\r",
+							"//     console.log(\"Error parsing JSON response:\", e);\r",
+							"//     return; // Stop execution if JSON parsing fails\r",
+							"// }\r",
+							"\r",
+							"// // Ensure response contains expected fields\r",
+							"// if (response.token) {\r",
+							"//     pm.environment.set(\"TOKEN\", response.token);\r",
+							"// } else {\r",
+							"//     console.log(\"Warning: Token not found in response.\");\r",
+							"// }\r",
+							"\r",
+							"// // Status code check\r",
+							"// pm.test(\"Status code is 200\", function () {\r",
+							"//     pm.response.to.have.status(200);\r",
+							"// });\r",
+							"\r",
+							"// // Extract user ID safely\r",
+							"// if (response.data && response.data.id) {\r",
+							"//     pm.environment.set(\"global_user_ID\", response.data.id); // Use environment variable\r",
+							"// } else {\r",
+							"//     console.log(\"Warning: User ID not found in response.\");\r",
+							"// }\r",
+							"\r",
+							"// // Set next request only if user ID exists\r",
+							"// if (pm.environment.get(\"global_user_ID\")) {\r",
+							"//     pm.execution.setNextRequest(\"Get All MassageShops\");\r",
+							"// } else {\r",
+							"//     console.log(\"Stopping execution: No valid user ID found.\");\r",
+							"//     pm.execution.setNextRequest(null); // Stops execution if no valid ID\r",
+							"// }\r",
 							""
 						],
 						"type": "text/javascript",
@@ -120,7 +162,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "\r\n{\r\n   \"email\" : \"user128doe@gmail.com\",\r\n    \"password\" : \"12345678\"\r\n}",
+					"raw": "\r\n{\r\n   \"email\" : \"user141doe@gmail.com\",\r\n    \"password\" : \"12345678\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -252,6 +294,10 @@
 							"    pm.response.to.have.status(200);\r",
 							"}); \r",
 							"\r",
+							"const response = pm.response.json();\r",
+							"const reserve_id2 = response.data ? response.data._id : null; \r",
+							"pm.environment.set(\"reserve_ID2\", reserve_id2);\r",
+							"\r",
 							"pm.execution.setNextRequest(\"Add Reserve User3\");"
 						],
 						"type": "text/javascript",
@@ -326,6 +372,9 @@
 							"    throw new Error(\"reserve_ID not found in response.\");\r",
 							"}\r",
 							"\r",
+							"// pm.environment.set(\"reserve_ID\", reserve_id);\r",
+							"// pm.globals.set(\"global_reserve_ID\", reserve_id);\r",
+							"\r",
 							"pm.execution.setNextRequest(\"Add Reserve User4 Error\");"
 						],
 						"type": "text/javascript",
@@ -395,7 +444,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"pm.test(\"Status code is 200\", function () {\r",
+							"pm.test(\"Status code is 400\", function () {\r",
 							"    pm.response.to.have.status(400);\r",
 							"}); \r",
 							"\r",
@@ -669,7 +718,7 @@
 							"});\r",
 							"\r",
 							"const response = pm.response.json();\r",
-							"const admin_id = response.data ? response.data.id : null;\r",
+							"const admin_id = response.data ? response.data.id : null; // Check for the presence of 'data' property\r",
 							"\r",
 							"pm.globals.set(\"admin_ID\", admin_id);\r",
 							"\r",
@@ -728,11 +777,11 @@
 							"pm.test(\"Status code is 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
-							"let responseData = pm.response.json(); \r",
+							"let responseData = pm.response.json(); // Parse the JSON response\r",
 							"\r",
 							"if (Array.isArray(responseData) && responseData.length > 0) {\r",
-							"    let firstID = responseData[0].id; \r",
-							"    if (!pm.globals.has(\"global_reserve_ID\")) { \r",
+							"    let firstID = responseData[0].id; // Get the ID of the first item\r",
+							"    if (!pm.globals.has(\"global_reserve_ID\")) { // Only set if globalID is not already set\r",
 							"        pm.globals.set(\"global_reserve_ID\", firstID);\r",
 							"    }\r",
 							"}\r",
@@ -815,7 +864,7 @@
 					"variable": [
 						{
 							"key": "reserveId",
-							"value": "67c46ac1f45619a6870f7c2a"
+							"value": "{{reserve_ID2}}"
 						}
 					]
 				}
@@ -866,7 +915,7 @@
 					"variable": [
 						{
 							"key": "reserveId",
-							"value": "67c46ac1f45619a6870f7c2a"
+							"value": "{{reserve_ID2}}"
 						}
 					]
 				}
