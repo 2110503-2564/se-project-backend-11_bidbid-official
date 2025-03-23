@@ -10,7 +10,7 @@ exports.getReservations = async (req, res, next) => {
     if (req.user.role !== 'admin') {
         query = Reservation.find({ user: req.user.id }).populate({
             path: 'massageShop',
-            select: 'name address phoneNumber openTime closeTime'
+            select: 'name address phoneNumber openTime closeTime picture'
         });
     } else {
         if (req.params.massageShopId) {
@@ -20,7 +20,7 @@ exports.getReservations = async (req, res, next) => {
         } else {
             query = Reservation.find().populate({
                 path: 'massageShop',
-                select: 'name address phoneNumber openTime closeTime'
+                select: 'name address phoneNumber openTime closeTime picture'
             });
         }
     }
@@ -49,7 +49,7 @@ exports.getReservation = async (req, res, next) => {
     try {
         const reservation = await Reservation.findById(req.params.id).populate({
             path: 'massageShop',
-            select: 'name address phoneNumber openTime closeTime'
+            select: 'name address phoneNumber openTime closeTime picture'
         });
 
         if (!reservation) {
