@@ -6,41 +6,89 @@ const MassageShop = require('../models/MassageShop');
 //@access Private
 exports.getReservations = async (req, res, next) => {
     let query;
-
+  
     if (req.user.role !== 'admin') {
-        query = Reservation.find({ user: req.user.id }).populate({
-            path: 'massageShop',
-            select: 'name address phoneNumber openTime closeTime picture'
+      query = Reservation.find({ user: req.user.id })
+        .populate({
+          path: 'massageShop',
+          select: 'name address phoneNumber openTime closeTime picture',
+        })
+        .populate({
+          path: 'user',
+          select: 'name phoneNumber', // add phoneNumber here if your user model includes it
         });
     } else {
-        if (req.params.massageShopId) {
-            query = Reservation.find({
-                massageShop: req.params.massageShopId
-            });
-        } else {
-            query = Reservation.find().populate({
-                path: 'massageShop',
-                select: 'name address phoneNumber openTime closeTime picture'
-            });
-        }
+      if (req.params.massageShopId) {
+        query = Reservation.find({
+          massageShop: req.params.massageShopId,
+        });
+      } else {
+        query = Reservation.find()
+          .populate({
+            path: 'massageShop',
+            select: 'name address phoneNumber openTime closeTime picture',
+          })
+          .populate({
+            path: 'user',
+            select: 'name phoneNumber',
+          });
+      }
     }
-
+  
     try {
-        const reservations = await query;
-
-        res.status(200).json({
-            success: true,
-            count: reservations.length,
-            data: reservations
-        });
+      const reservations = await query;
+  
+      res.status(200).json({
+        success: true,
+        count: reservations.length,
+        data: reservations,
+      });
     } catch (err) {
-        console.log(err.stack);
-        return res.status(500).json({
-            success: false,
-            message: "Cannot find Reservation"
-        });
+      console.log(err.stack);
+      return res.status(500).json({
+        success: false,
+        message: 'Cannot find Reservation',
+      });
     }
-}
+  };
+  
+// exports.getReservations = async (req, res, next) => {
+//     let query;
+
+//     if (req.user.role !== 'admin') {
+//         query = Reservation.find({ user: req.user.id }).populate({
+//             path: 'massageShop',
+//             select: 'name address phoneNumber openTime closeTime picture'
+//         });
+//     } else {
+//         if (req.params.massageShopId) {
+//             query = Reservation.find({
+//                 massageShop: req.params.massageShopId
+//             });
+//         } else {
+//             query = Reservation.find().populate({
+//                 path: 'massageShop',
+//                 select: 'name address phoneNumber openTime closeTime picture'
+//             });
+//         }
+//     }
+
+//     try {
+//         const reservations = await query;
+
+//         res.status(200).json({
+//             success: true,
+//             count: reservations.length,
+//             data: reservations
+//         });
+//     } catch (err) {
+//         console.log(err.stack);
+//         return res.status(500).json({
+//             success: false,
+//             message: "Cannot find Reservation"
+//         });
+//     }
+// }
 
 //@desc Get single reservation
 //@route GET /api/v1/reservations/:id
