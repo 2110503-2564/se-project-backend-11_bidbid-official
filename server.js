@@ -9,10 +9,10 @@ dotenv.config({path: './config/config.env'});
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
 
-const corsOptions = {
-  origin: ['http://localhost:3000', 'https://fe-project-2024-2-may-i-scan.vercel.app/'],
-  credentials: true,
-}
+// const corsOptions = {
+//   origin: ['http://localhost:3000', 'https://fe-project-2024-2-may-i-scan.vercel.app/'],
+//   credentials: true,
+// }
 
 connectDB();
 
@@ -22,7 +22,8 @@ app.use (cookieParser());
 
 app.use (express.json());
 // edit
-app.use(cors(corsOptions))
+// app.use(cors(corsOptions));
+app.use(cors());
 // app.use(cors({ origin: 'http://localhost:3000' }))
 
 const auth = require('./routes/auth');
