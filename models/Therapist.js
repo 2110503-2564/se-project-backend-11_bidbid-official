@@ -10,7 +10,7 @@ const TherapistSchema = new mongoose.Schema({
     gender : {
         type: String,
         required: [true, 'Please select a gender'],
-        enum: ['male', 'female']
+        enum: ['Male', 'Female']
     },
     phoneNumber: {
         type: String,
@@ -76,11 +76,10 @@ const TherapistSchema = new mongoose.Schema({
             type: String,
         }
     }],
-    notAvailableDate: [{
-        date: {
-            type: String,
-        }
-    }]
+    notAvailableDays: {
+        type: [String], // <-- array of strings
+        default: []
+    }
 });
 
 TherapistSchema.pre('save', async function (next) {
