@@ -46,7 +46,7 @@ app.use('/api/v1/massageShops', massageShops);
 app.use('/api/v1/reviews', reviews);
 app.use('/api/v1/therapists', therapists);
 
-const PORT=process.env.PORT || 5000;
+const PORT=process.env.PORT || 5003;
 const server = app.listen (PORT, console.log('Server running in ', process.env.NODE_ENV, ' mode on port ', PORT));
 
 // Swagger
@@ -60,7 +60,7 @@ const swaggerOptions={
       },
       servers: [
         {
-          url: 'http://localhost:5000/api/v1'
+          url: 'http://localhost:5003/api/v1'
         }
       ],
     },

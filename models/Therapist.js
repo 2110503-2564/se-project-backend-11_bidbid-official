@@ -59,7 +59,8 @@ const TherapistSchema = new mongoose.Schema({
     },
     licenseNumber: {
         type: String,
-        required: [true, 'Please add your License Number']
+        required: [true, 'Please add your License Number'],
+        unique:true
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
