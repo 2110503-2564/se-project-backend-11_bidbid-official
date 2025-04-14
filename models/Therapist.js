@@ -15,12 +15,14 @@ const TherapistSchema = new mongoose.Schema({
     phoneNumber: {
         type: String,
         required: [true, 'Please add a phone number'],
-        unique: true
+        unique: true,
+        match: [/^\d{10}$/, 'Phone number must be exactly 10 digits and contain only numbers']
     },
     experience : {
         type: Number,
-        required: [true, 'Please add an experience (year)']
-    },
+        min: [0, 'Experience must be at least 0'],
+        required: [true, 'Please add year of experience']
+    },    
     specialities : {
         type: String,
         required: [true, 'Please add a specialities']
@@ -62,11 +64,13 @@ const TherapistSchema = new mongoose.Schema({
             ref: 'MassageShop',
             validate: {
                 validator: async function(value) {
-                  const shop = await mongoose.model('MassageShop').findById(value);
-                  return !!shop;
+                    if (value === null || value === undefined) return true; 
+                    const shop = await mongoose.model('MassageShop').findById(value);
+                    return !!shop;
                 },
                 message: 'Massage shop not found'
-              }
+            },
+            default: null
         },
         massageShop_name: {
             type: String,
