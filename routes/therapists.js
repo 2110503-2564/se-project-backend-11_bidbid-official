@@ -1,23 +1,23 @@
 const express = require('express');
 const {
-    getTherapists,
     getTherapist,
-    // addTherapist,
-    // updateTherapist,
-    // deleteTherapist
+    updateTherapist,
+    adminUpdateTherapist
 } = require('../controllers/therapists');
 
-const router = express.Router({ mergeParams: true });
+const router = express.Router();
 
 const { protect, authorize } = require('../middleware/auth');
 
-router.route('/')
-    .get(getTherapists)
-    // .post(protect, authorize('user', 'admin'), addReview);
+// Therapist routes
+router
+    .route('/:id')
+    .get(protect, authorize('therapist'), getTherapist)
+    .put(protect, authorize('therapist'), updateTherapist);
 
-router.route('/:id')
-    .get(getTherapist)
-    // .put(protect, authorize('user', 'admin'), updateReview)
-    // .delete(protect, authorize('user', 'admin'), deleteReview);
+// Admin route to update any therapist
+// router
+//     .route('/:id')
+//     .put(protect, authorize('admin'), adminUpdateTherapist);
 
 module.exports = router;

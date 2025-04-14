@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User =require('../models/User');
+const Therapist = require('../models/Therapist');
 
 //Protect routes
 exports.protect=async (req, res,next)=> {
@@ -16,11 +17,18 @@ exports.protect=async (req, res,next)=> {
     try {
         //Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log('Decoded:', decoded);
 
-        console.log(decoded);
+        let user = await User.findById(decoded.id);
+        if (!user) {
+            user = await Therapist.findById(decoded.id); // เพิ่มเช็ค therapist
+        }
 
-        req.user=await User.findById(decoded.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
 
+        req.user = user;
         next();
     } catch(err) {
         console.log(err.stack);

@@ -16,6 +16,7 @@ exports.register = async (req, res, next)=> {
         if (role === 'therapist') {
             // เก็บ therapist ลง Therapist collection
             user = await Therapist.create(req.body);
+            user = await User.create(req.body);
         } else {
             // เก็บ user ลง Users collection
             user = await User.create({
@@ -38,27 +39,57 @@ exports.register = async (req, res, next)=> {
 //@desc Login user
 //@route POST /api/v1/auth/login
 //@access Public
-exports.login=async (req, res, next) => {
-    const {email, password}=req.body;
+exports.login = async (req, res, next) => {
+    const { email, password } = req.body;
 
-    if(!email || !password) {
-        return res.status (400).json({success:false, msg:'Please provide an email and password'});
+    if (!email || !password) {
+        return res.status(400).json({ success: false, msg: 'Please provide an email and password' });
     }
 
-    const user =await User.findOne({email}).select('+password');
-    if(!user) {
-        return res.status(400).json({success:false, msg: 'Invalid credentials'});
+    // ลองหาใน User collection ก่อน
+    let user = await User.findOne({ email }).select('+password');
+    let isTherapist = false;
+
+    // ถ้าไม่เจอใน User → ลองหาใน Therapist
+    if (user.role === 'therapist') {
+        user = await Therapist.findOne({ email }).select('+password');
+        isTherapist = true;
+    }
+
+    if (!user) {
+        return res.status(400).json({ success: false, msg: 'Invalid credentials' });
     }
 
     const isMatch = await user.matchPassword(password);
-    if(!isMatch) {
-        return res.status (401).json({success: false, msg:'Invalid credentials'});
+    if (!isMatch) {
+        return res.status(401).json({ success: false, msg: 'Invalid credentials' });
     }
 
+    // ส่ง token กลับ (ไม่สนว่าเป็น therapist หรือ user)
     sendTokenResponse(user, 200, res);
 };
+// exports.login=async (req, res, next) => {
+//     const {email, password}=req.body;
+//
+//     if(!email || !password) {
+//         return res.status (400).json({success:false, msg:'Please provide an email and password'});
+//     }
+//
+//     const user =await User.findOne({email}).select('+password');
+//     if(!user) {
+//         return res.status(400).json({success:false, msg: 'Invalid credentials'});
+//     }
+//
+//     const isMatch = await user.matchPassword(password);
+//     if(!isMatch) {
+//         return res.status (401).json({success: false, msg:'Invalid credentials'});
+//     }
+//
+//     sendTokenResponse(user, 200, res);
+// };
 
 //Get token from model, create cookie and send response
+
 const sendTokenResponse=(user, statusCode, res)=> {
     
     const token=user.getSignedJwtToken();
@@ -89,13 +120,28 @@ const sendTokenResponse=(user, statusCode, res)=> {
 //@desc Get current logged in user
 //@route POST /api/v1/auth/me
 //@access Private
-exports.getMe=async(req, res, next)=>{
-    const user=await User.findById(req.user.id);
-    res.status (200).json({
-        success:true,
-        data:user
-    })
-}
+exports.getMe = async (req, res, next) => {
+    let user = await User.findById(req.user.id);
+    if (req.user.role === 'therapist') {
+        user = await Therapist.findById(req.user.id);
+    }
+
+    if (!user) {
+        return res.status(404).json({ success: false, msg: "User not found" });
+    }
+
+    res.status(200).json({
+        success: true,
+        data: user,
+    });
+};
+// exports.getMe=async(req, res, next)=>{
+//     const user = await User.findById(req.user.id);
+//     res.status (200).json({
+//         success:true,
+//         data:user
+//     })
+// }
 
 exports.logout = async (req, res, next) => {
     res.cookie('token', 'none', {
