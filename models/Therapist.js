@@ -12,6 +12,11 @@ const TherapistSchema = new mongoose.Schema({
         required: [true, 'Please select a gender'],
         enum: ['Male', 'Female']
     },
+    age : {
+        type: String,
+        required: [true, 'Please add your age'],
+        min: [18, 'Experience must be at least 18'],
+    },
     phoneNumber: {
         type: String,
         required: [true, 'Please add a phone number'],
@@ -51,6 +56,10 @@ const TherapistSchema = new mongoose.Schema({
         required: [true, 'Please add a password'],
         minlength: 6,
         select: false
+    },
+    licenseNumber: {
+        type: String,
+        required: [true, 'Please add your License Number']
     },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
