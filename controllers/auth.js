@@ -1,5 +1,6 @@
 const { response } = require('express');
 const User = require('../models/User');
+const Therapist = require('../models/Therapist');
 
 //@desc Register user
 //@route POST /api/v1/auth/register
@@ -8,25 +9,30 @@ exports.register = async (req, res, next)=> {
     console.log(req.body);
 
     try {
-        const {name, email, phoneNumber, password, role}=req.body;
-        
-        //Create user
-        const user=await User.create({
-            name,
-            email,
-            phoneNumber,
-            password,
-            role
-        });
-        //Create token
-        // const token = user.getSignedJwtToken();
+        const { name, email, phoneNumber, password, role } = req.body;
 
-        // res.status(200).json({success:true, token});
+        let user;
+
+        if (role === 'therapist') {
+            // เก็บ therapist ลง Therapist collection
+            user = await Therapist.create(req.body);
+        } else {
+            // เก็บ user ลง Users collection
+            user = await User.create({
+                name,
+                email,
+                phoneNumber,
+                password,
+                role
+            });
+        }
+
         sendTokenResponse(user, 200, res);
     } catch (err) {
-        res.status(400).json({success:false});
+        res.status(400).json({ success: false, error: err.message });
         console.log(err.stack);
     }
+
 }
 
 //@desc Login user
