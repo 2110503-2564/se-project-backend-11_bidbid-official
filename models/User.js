@@ -41,10 +41,23 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
+// UserSchema.pre('save', async function (next) {
+//     const salt = await bcrypt.genSalt(10);
+//     this.password = await bcrypt.hash(this.password, salt);
+// });
 UserSchema.pre('save', async function (next) {
+    // Only hash the password if it's modified and exists
+    if (!this.isModified('password')) return next();
+  
+    if (!this.password) {
+      return next(new Error('Password is missing during hash'));
+    }
+  
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
-});
+    next();
+  });
+  
 
 UserSchema.methods.getSignedJwtToken = function () {
     return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
