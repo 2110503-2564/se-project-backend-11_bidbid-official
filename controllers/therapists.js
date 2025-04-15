@@ -44,7 +44,28 @@ exports.getTherapist = async (req, res, next) => {
   }
 };
 
+// @desc    Get all therapists (optionally filtered by state)
+// @route   GET /api/v1/therapists
+// @access  Private (admin only)
+exports.getTherapists = async (req, res, next) => {
+  try {
+    // Optional query filtering
+    const queryObj = {};
+    if (req.query.state) {
+      queryObj.state = req.query.state;
+    }
 
+    const therapists = await Therapist.find(queryObj).populate('user');
+
+    res.status(200).json({
+      success: true,
+      count: therapists.length,
+      data: therapists
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
 
 // @desc Update current therapist profile
 // @route PUT /api/v1/therapists/me
@@ -111,9 +132,71 @@ exports.updateTherapist = async (req, res, next) => {
 
     await user.save(); // password will be hashed in pre-save hook
 
-    res.status(200).json({ success: true, data: therapist });
+    res.status(200).json({
+      success: true,
+      data: therapist
+    });
   } catch (err) {
     console.error("Update therapist error:", err);
     res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
+
+// @desc    Get all pending therapist profiles
+// @route   GET /api/v1/therapists
+// @access  Private (admin only)
+exports.getPendingTherapists = async (req, res, next) => {
+  try {
+    const pendingTherapists = await Therapist.find({ state: 'pending' }).populate('user');
+
+    res.status(200).json({
+      success: true,
+      therapists : pendingTherapists
+    });
+  } catch (err) {
+    console.error("Get pending therapists error:", err);
+    res.status(500).json({ success: false, message: 'Error fetching pending therapists' });
+  }
+};
+
+// @desc    PUT changes therapist state to verified
+// @route   PUT /api/v1/therapists/verified/:id
+// @access  Private (admin only)
+exports.verifiedTherapist = async (req, res, next) => {
+  try {
+    const therapist = await Therapist.findById(req.params.id);
+
+    if (!therapist) {
+      return res.status(404).json({ success: false, message: 'Therapist not found' });
+    }
+
+    therapist.state = 'verified';
+
+    await therapist.save();
+
+    res.status(200).json({ success: true, message: 'Therapist verified successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Therapist verified error' });
+  }
+};
+
+// @desc    PUT changes therapist state to rejected
+// @route   PUT /api/v1/therapists/rejected/:id
+// @access  Private (admin only)
+exports.rejectedTherapist = async (req, res, next) => {
+  try {
+    const therapist = await Therapist.findById(req.params.id);
+
+    if (!therapist) {
+      return res.status(404).json({ success: false, message: 'Therapist not found' });
+    }
+
+    therapist.state = 'rejected';
+
+    await therapist.save();
+
+    res.status(200).json({ success: true, message: 'Therapist rejected successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Therapist rejected fail' });
   }
 };
