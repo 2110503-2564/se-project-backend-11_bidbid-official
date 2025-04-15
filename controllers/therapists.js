@@ -6,8 +6,8 @@ const User = require('../models/User');
 // @access Private (therapist can access their own, admin can access all)
 exports.getTherapist = async (req, res, next) => {
   try {
-    // const therapist = await Therapist.findById(req.params.id).populate('user');
-    const therapist = await Therapist.findById(req.params.id);
+    const therapist = await Therapist.findById(req.params.id).populate('user');
+    // const therapist = await Therapist.findById(req.params.id);
 
     if (!therapist) {
       return res.status(404).json({
@@ -16,7 +16,9 @@ exports.getTherapist = async (req, res, next) => {
       });
     }
 
-    const isOwner = therapist.user?.toString?.() === req.user.id?.toString?.();
+    const therapistUserId = therapist.user?._id?.toString?.() || therapist.user?.toString?.();
+    // const isOwner = therapist.user?.toString?.() === req.user.id?.toString?.();
+    const isOwner = therapistUserId === req.user.id?.toString?.();
     const isAdmin = req.user.role === 'admin';
 
     console.log('therapist.user:', therapist.user);
@@ -76,19 +78,24 @@ exports.updateTherapist = async (req, res, next) => {
     // Restrictions for self-updatherapistte
     if (!isAdmin) {
       delete updates.role;
-      delete updates.state;
-
+    
+      // Allow rejected therapists to set state to 'pending'
+      if (therapist.state !== 'rejected') {
+        delete updates.state;
+      }
+    
       if (therapist.state === 'verified') {
         delete updates.licenseNumber;
         delete updates.workingInfo;
         delete updates.notAvailableDays;
       }
     }
+    
 
     const allowedTherapistFields = [
       'gender', 'age', 'experience', 'specialities',
       'licenseNumber', 'notAvailableDays', 'workingInfo',
-      'massageShopID', 'massageShop_name'
+      'massageShopID', 'massageShop_name', 'state',
     ];
 
     allowedTherapistFields.forEach((field) => {
@@ -139,7 +146,7 @@ exports.getPendingTherapists = async (req, res, next) => {
 // @desc    PUT changes therapist state to verified
 // @route   PUT /api/v1/therapists/verified/:id
 // @access  Private (admin only)
-exports.verifiedTherapist = async (req, res, next) => {
+exports.verifyTherapist = async (req, res, next) => {
   try {
     const therapist = await Therapist.findById(req.params.id);
 
@@ -160,7 +167,7 @@ exports.verifiedTherapist = async (req, res, next) => {
 // @desc    PUT changes therapist state to rejected
 // @route   PUT /api/v1/therapists/rejected/:id
 // @access  Private (admin only)
-exports.rejectedTherapist = async (req, res, next) => {
+exports.rejectTherapist = async (req, res, next) => {
   try {
     const therapist = await Therapist.findById(req.params.id);
 
@@ -175,5 +182,45 @@ exports.rejectedTherapist = async (req, res, next) => {
     res.status(200).json({ success: true, message: 'Therapist rejected successfully' });
   } catch (err) {
     res.status(500).json({ success: false, error: 'Therapist rejected fail' });
+  }
+};
+
+// @desc    Get all therapists (optionally filtered by state)
+// @route   GET /api/v1/therapists
+// @access  Private (admin only, or public if needed)
+exports.getTherapists = async (req, res, next) => {
+  try {
+    // Optional query filtering
+    const queryObj = {};
+    if (req.query.state) {
+      queryObj.state = req.query.state;
+    }
+
+    const therapists = await Therapist.find(queryObj).populate('user');
+
+    res.status(200).json({
+      success: true,
+      count: therapists.length,
+      data: therapists
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// @desc    Get all verified therapist profiles
+// @route   GET /api/v1/therapists/verified
+// @access  Public (anyone can view)
+exports.getVerifiedTherapists = async (req, res, next) => {
+  try {
+    const verifiedTherapists = await Therapist.find({ state: 'verified' }).populate('user');
+
+    res.status(200).json({
+      success: true,
+      therapists : verifiedTherapists
+    });
+  } catch (err) {
+    console.error("Get pending therapists error:", err);
+    res.status(500).json({ success: false, message: 'Error fetching pending therapists' });
   }
 };
