@@ -44,29 +44,6 @@ exports.getTherapist = async (req, res, next) => {
   }
 };
 
-// @desc    Get all therapists (optionally filtered by state)
-// @route   GET /api/v1/therapists
-// @access  Private (admin only)
-exports.getTherapists = async (req, res, next) => {
-  try {
-    // Optional query filtering
-    const queryObj = {};
-    if (req.query.state) {
-      queryObj.state = req.query.state;
-    }
-
-    const therapists = await Therapist.find(queryObj).populate('user');
-
-    res.status(200).json({
-      success: true,
-      count: therapists.length,
-      data: therapists
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
-
 // @desc Update current therapist profile
 // @route PUT /api/v1/therapists/me
 // @access Private (therapist only)
