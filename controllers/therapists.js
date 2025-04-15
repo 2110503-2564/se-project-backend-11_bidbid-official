@@ -1,55 +1,50 @@
 const Therapist = require('../models/Therapist');
 const User = require('../models/User');
 
-// @desc Get current therapist profile
-// @route GET /api/v1/therapists/me
-// @access Private (therapist only)
+// @desc Get therapist profile by ID
+// @route GET /api/v1/therapists/:id
+// @access Private (therapist can access their own, admin can access all)
 exports.getTherapist = async (req, res, next) => {
-    // try {
-    //     const therapist = await Therapist.findById(req.params.id);
+  try {
+    // const therapist = await Therapist.findById(req.params.id).populate('user');
+    const therapist = await Therapist.findById(req.params.id);
 
-    //     if (!therapist) {
-    //         return res.status(404).json({ success: false, message: 'Therapist profile not found' });
-    //     }
-
-    //     res.status(200).json({ success: true, data: therapist });
-    // } catch (err) {
-    //     res.status(500).json({ success: false, message: 'Server Error' });
-    // }
-
-    try {
-        const therapist = await Therapist.findById(req.params.id);
-
-        if (!therapist) {
-            return res.status(404).json({
-                success: false,
-                message: 'Therapist profile not found'
-            });
-        }
-
-        // ตรวจสอบว่าผู้ใช้งานเป็นเจ้าของ profile หรือ admin
-        if (
-            req.user.role !== 'admin' &&
-            therapist._id.toString() !== req.user._id.toString()
-        ) {
-            return res.status(403).json({
-                success: false,
-                message: 'Not authorized to view this profile'
-            });
-        }
-
-        res.status(200).json({
-            success: true,
-            data: therapist
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({
-            success: false,
-            message: 'Server Error'
-        });
+    if (!therapist) {
+      return res.status(404).json({
+        success: false,
+        message: 'Therapist profile not found',
+      });
     }
+
+    const isOwner = therapist.user?.toString?.() === req.user.id?.toString?.();
+    const isAdmin = req.user.role === 'admin';
+
+    console.log('therapist.user:', therapist.user);
+    console.log('req.user.id:', req.user.id); 
+    console.log('isOwner:', isOwner);
+    console.log('isAdmin:', isAdmin);
+
+    if (!isAdmin && !isOwner) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to view this profile',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: therapist,
+    });
+  } catch (err) {
+    console.error('getTherapist error:', err);
+    res.status(500).json({
+      success: false,
+      message: 'Server Error',
+    });
+  }
 };
+
+
 
 // @desc Update current therapist profile
 // @route PUT /api/v1/therapists/me
@@ -80,7 +75,7 @@ exports.updateTherapist = async (req, res, next) => {
 
     const updates = { ...req.body };
 
-    // Restrictions for self-update
+    // Restrictions for self-updatherapistte
     if (!isAdmin) {
       delete updates.role;
       delete updates.state;
@@ -92,7 +87,6 @@ exports.updateTherapist = async (req, res, next) => {
       }
     }
 
-    // ✅ Therapist updates
     const allowedTherapistFields = [
       'gender', 'age', 'experience', 'specialities',
       'licenseNumber', 'notAvailableDays', 'workingInfo',

@@ -12,12 +12,10 @@ const { protect, authorize } = require('../middleware/auth');
 // Therapist routes
 router
     .route('/:id')
-    .get(protect, authorize('therapist'), getTherapist)
-    .put(protect, authorize('therapist'), updateTherapist);
+    .get(protect, getTherapist)
+    .put(protect, updateTherapist)
+    // .get(protect, authorize('therapist', 'admin'), getTherapist)
+    // .put(protect, authorize('therapist', 'admin'), updateTherapist)
 
-// Admin route to update any therapist
-// router
-//     .route('/:id')
-//     .put(protect, authorize('admin'), adminUpdateTherapist);
 
 module.exports = router;
