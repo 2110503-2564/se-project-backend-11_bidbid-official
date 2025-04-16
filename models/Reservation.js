@@ -27,6 +27,10 @@ const ReservationSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    massageProgram: {
+        type: String,
+        required: true
+    },
     therapistID: {
         type: mongoose.Schema.ObjectId,
         ref: 'Therapist',
