@@ -2,17 +2,22 @@ const mongoose = require('mongoose');
 
 const ReservationSchema = new mongoose.Schema({
     massageShop: {
-        type: String,
+        type: mongoose.Schema.ObjectId, 
         ref: 'MassageShop',
         required: true
     },
-    userID: {
+    // userID: {
+    //     type: mongoose.Schema.ObjectId,
+    //     ref: 'User',
+    //     required: true
+    // },
+    // user_name: {
+    //     type: String,
+    //     required: true
+    // },
+    user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-        required: true
-    },
-    user_name: {
-        type: String,
         required: true
     },
     date: {
@@ -31,9 +36,14 @@ const ReservationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    therapistID:{
-        type:String,
-        required:true
+    // therapistID:{
+    //     type:String,
+    //     required:true
+    // },
+    therapist: {
+        type: mongoose.Schema.ObjectId, 
+        ref: 'Therapist',
+        required: true
     },
     createdAt: {
         type: Date,
@@ -42,29 +52,3 @@ const ReservationSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.model('Reservation', ReservationSchema);
-
-
-// const mongoose = require('mongoose');
-
-// const ReservationSchema = new mongoose.Schema({
-//     reservationDate: {
-//         type: Date,
-//         required: true
-//     },
-//     user: {
-//         type: mongoose.Schema.ObjectId,
-//         ref: 'User',
-//         required: true
-//     },
-//     massageShop: {
-//         type: mongoose.Schema.ObjectId,
-//         ref: 'MassageShop',
-//         required: true
-//     },
-//     createdAt: {
-//         type: Date,
-//         default: Date.now
-//     }
-// });
-
-// module.exports = mongoose.model('Reservation', ReservationSchema);
