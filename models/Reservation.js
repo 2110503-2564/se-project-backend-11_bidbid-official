@@ -31,9 +31,9 @@ const ReservationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    massageProgram: {
-        type: String,
-        required: true
+    therapistID:{
+        type:String,
+        required:true
     },
     createdAt: {
         type: Date,
