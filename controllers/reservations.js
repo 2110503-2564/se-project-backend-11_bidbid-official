@@ -8,14 +8,34 @@ exports.getReservations = async (req, res, next) => {
   let query;
 
   if (req.user.role !== "admin") {
-    query = Reservation.find({ user: req.user.id }).populate({
-      path: "massageShop",
-      select: "name address phoneNumber openTime closeTime picture",
-    });
+    query = Reservation.find({ user: req.user.id })
+      .populate({
+        path: "massageShop",
+        select: "name address phoneNumber openTime closeTime picture",
+      })
+      .populate({
+        path: "user",
+        select: "name phoneNumber", 
+      })
+      .populate({
+        path: "therapist",
+        populate: {
+          path: "user",
+          select: "name",
+        },
+      });
   } else {
     if (req.params.massageShopId) {
       query = Reservation.find({
         massageShop: req.params.massageShopId,
+      })
+      .populate({
+        path: "massageShop",
+        select: "name address phoneNumber openTime closeTime picture",
+      })
+      .populate({
+        path: "user",
+        select: "name phoneNumber",
       });
     } else {
       query = Reservation.find()
@@ -29,6 +49,29 @@ exports.getReservations = async (req, res, next) => {
         });
     }
   }
+
+  // if (req.user.role !== "admin") {
+  //   query = Reservation.find({ user: req.user.id }).populate({
+  //     path: "massageShop",
+  //     select: "name address phoneNumber openTime closeTime picture",
+  //   });
+  // } else {
+  //   if (req.params.massageShopId) {
+  //     query = Reservation.find({
+  //       massageShop: req.params.massageShopId,
+  //     });
+  //   } else {
+  //     query = Reservation.find()
+  //       .populate({
+  //         path: "massageShop",
+  //         select: "name address phoneNumber openTime closeTime picture",
+  //       })
+  //       .populate({
+  //         path: "user",
+  //         select: "name phoneNumber",
+  //       });
+  //   }
+  // }
 
   try {
     const reservations = await query;
@@ -144,9 +187,12 @@ exports.addReservation = async (req, res, next) => {
         message: `The user with ID ${req.user.id} has already made 3 reservations`,
       });
     }
+    
+    console.log("req.user:", req.user);
+    console.log("req.body:", req.body); 
 
     const reservation = await Reservation.create(req.body);
-
+    
     res.status(200).json({
       success: true,
       data: reservation,
