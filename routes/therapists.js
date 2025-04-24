@@ -9,6 +9,7 @@ const {
   rejectTherapist,
   removeTherapist,
   getTherapistAppointments,
+  getTherapistReservations,
 } = require("../controllers/therapists");
 
 const router = express.Router();
@@ -33,8 +34,8 @@ router.route("/")
     .get(protect, authorize("admin"), getTherapists);
   
 router
-  .route("/me/appointments")
-  .get(protect, authorize("therapist"), getTherapistAppointments);
+  .route("/me/reservations")
+  .get(protect, authorize("therapist"), getTherapistReservations);
 
 router
   .route("/:id")

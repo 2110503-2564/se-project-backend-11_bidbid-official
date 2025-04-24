@@ -302,7 +302,7 @@ exports.removeTherapist = async (req, res, next) => {
   }
 };
 
-exports.getTherapistAppointments = async (req, res, next) => {
+exports.getTherapistReservations = async (req, res, next) => {
   try {
     // Ensure the user is a therapist
     if (req.user.role !== "therapist") {
@@ -313,12 +313,18 @@ exports.getTherapistAppointments = async (req, res, next) => {
     }
 
     // Fetch appointments for the logged-in therapist
-    const appointments = await Appointment.find({ therapist: req.user.id });
-
+    const therapist = await Therapist.findOne({ user: req.user.id });
+    if (!therapist) {
+      return res.status(404).json({
+        success: false,
+        message: "Therapist profile not found",
+      });
+    }
+    const reservations = await Reservation.find({therapist: therapist._id});
     res.status(200).json({
       success: true,
-      count: appointments.length,
-      data: appointments,
+      count: reservations.length,
+      data: reservations,
     });
   } catch (err) {
     console.error("getTherapistAppointments error:", err);
