@@ -1,5 +1,6 @@
 const Therapist = require("../models/Therapist");
 const User = require("../models/User");
+const Reservation = require("../models/Reservation"); // Import the Appointment model
 
 // @desc Get therapist profile by ID
 // @route GET /api/v1/therapists/:id
@@ -294,6 +295,33 @@ exports.removeTherapist = async (req, res, next) => {
     });
   } catch (err) {
     console.error("removeTherapist error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+exports.getTherapistAppointments = async (req, res, next) => {
+  try {
+    // Ensure the user is a therapist
+    if (req.user.role !== "therapist") {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to access appointments",
+      });
+    }
+
+    // Fetch appointments for the logged-in therapist
+    const appointments = await Appointment.find({ therapist: req.user.id });
+
+    res.status(200).json({
+      success: true,
+      count: appointments.length,
+      data: appointments,
+    });
+  } catch (err) {
+    console.error("getTherapistAppointments error:", err);
     res.status(500).json({
       success: false,
       message: "Server Error",

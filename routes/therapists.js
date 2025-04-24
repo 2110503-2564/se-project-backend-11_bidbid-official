@@ -8,6 +8,7 @@ const {
   verifyTherapist,
   rejectTherapist,
   removeTherapist,
+  getTherapistAppointments,
 } = require("../controllers/therapists");
 
 const router = express.Router();
@@ -30,6 +31,10 @@ router
 
 router.route("/")
     .get(protect, authorize("admin"), getTherapists);
+  
+router
+  .route("/me/appointments")
+  .get(protect, authorize("therapist"), getTherapistAppointments);
 
 router
   .route("/:id")
