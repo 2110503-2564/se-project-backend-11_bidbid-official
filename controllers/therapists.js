@@ -302,7 +302,7 @@ exports.removeTherapist = async (req, res, next) => {
   }
 };
 
-exports.getTherapistReservations = async (req, res, next) => {
+/* exports.getTherapistReservations = async (req, res, next) => {
   try {
     // Ensure the user is a therapist
     if (req.user.role !== "therapist") {
@@ -333,4 +333,29 @@ exports.getTherapistReservations = async (req, res, next) => {
       message: "Server Error",
     });
   }
+}; */
+exports.getTherapistReservations = async (req, res, next) => {
+  try {
+    if (req.user.role !== "therapist") {
+      return res.status(403).json({ success: false, message: "Not authorized" });
+    }
+    // find this therapist profile
+    const therapist = await Therapist.findOne({ user: req.user.id });
+    if (!therapist) {
+      return res.status(404).json({ success: false, message: "Profile not found" });
+    }
+    // pull their reservations, populating nested refs
+    const reservations = await Reservation.find({ therapist: therapist._id })
+      .populate({ path: "user", select: "name" })
+      .populate({ path: "massageShop", select: "name" });
+    res.status(200).json({
+      success: true,
+      count: reservations.length,
+      data: reservations,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
 };
+
