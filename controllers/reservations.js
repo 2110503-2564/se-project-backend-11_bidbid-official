@@ -15,7 +15,7 @@ exports.getReservations = async (req, res, next) => {
       })
       .populate({
         path: "user",
-        select: "name phoneNumber", 
+        select: "name phoneNumber",
       })
       .populate({
         path: "therapist",
@@ -24,20 +24,30 @@ exports.getReservations = async (req, res, next) => {
           select: "name",
         },
       });
-  } else {
+  } 
+
+  else {
     if (req.params.massageShopId) {
       query = Reservation.find({
         massageShop: req.params.massageShopId,
       })
-      .populate({
-        path: "massageShop",
-        select: "name address phoneNumber openTime closeTime picture",
-      })
-      .populate({
-        path: "user",
-        select: "name phoneNumber",
-      });
-    } else {
+        .populate({
+          path: "massageShop",
+          select: "name address phoneNumber openTime closeTime picture",
+        })
+        .populate({
+          path: "user",
+          select: "name phoneNumber",
+        })
+        .populate({
+          path: "therapist",
+          populate: {
+            path: "user",
+            select: "name",
+          },
+        });
+    } 
+    else {
       query = Reservation.find()
         .populate({
           path: "massageShop",
@@ -46,6 +56,13 @@ exports.getReservations = async (req, res, next) => {
         .populate({
           path: "user",
           select: "name phoneNumber",
+        })
+        .populate({
+          path: "therapist",
+          populate: {
+            path: "user",
+            select: "name",
+          },
         });
     }
   }
@@ -139,12 +156,10 @@ exports.getReservation = async (req, res, next) => {
     });
 
     if (!reservation) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: `No reservation with the id of ${req.params.id}`,
-        });
+      return res.status(404).json({
+        success: false,
+        message: `No reservation with the id of ${req.params.id}`,
+      });
     }
 
     res.status(200).json({
@@ -169,12 +184,10 @@ exports.addReservation = async (req, res, next) => {
     const massageShop = await MassageShop.findById(req.params.massageShopId);
 
     if (!massageShop) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: `No massage shop with the id of ${req.params.massageShopId}`,
-        });
+      return res.status(404).json({
+        success: false,
+        message: `No massage shop with the id of ${req.params.massageShopId}`,
+      });
     }
 
     req.body.user = req.user.id;
@@ -187,12 +200,12 @@ exports.addReservation = async (req, res, next) => {
         message: `The user with ID ${req.user.id} has already made 3 reservations`,
       });
     }
-    
+
     console.log("req.user:", req.user);
-    console.log("req.body:", req.body); 
+    console.log("req.body:", req.body);
 
     const reservation = await Reservation.create(req.body);
-    
+
     res.status(200).json({
       success: true,
       data: reservation,
@@ -213,24 +226,20 @@ exports.updateReservation = async (req, res, next) => {
     let reservation = await Reservation.findById(req.params.id);
 
     if (!reservation) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: `No reservation with id of ${req.params.id}`,
-        });
+      return res.status(404).json({
+        success: false,
+        message: `No reservation with id of ${req.params.id}`,
+      });
     }
 
     if (
       reservation.user.toString() !== req.user.id &&
       req.user.role !== "admin"
     ) {
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message: `User ${req.user.id} is not authorized to update this reservation`,
-        });
+      return res.status(401).json({
+        success: false,
+        message: `User ${req.user.id} is not authorized to update this reservation`,
+      });
     }
 
     reservation = await Reservation.findByIdAndUpdate(req.params.id, req.body, {
@@ -258,12 +267,10 @@ exports.deleteReservation = async (req, res, next) => {
     const reservation = await Reservation.findById(req.params.id);
 
     if (!reservation) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: `No reservation with id of ${req.params.id}`,
-        });
+      return res.status(404).json({
+        success: false,
+        message: `No reservation with id of ${req.params.id}`,
+      });
     }
 
     // Make sure user is the reservation owner
@@ -271,12 +278,10 @@ exports.deleteReservation = async (req, res, next) => {
       reservation.user.toString() !== req.user.id &&
       req.user.role !== "admin"
     ) {
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message: `User ${req.user.id} is not authorized to delete this reservation`,
-        });
+      return res.status(401).json({
+        success: false,
+        message: `User ${req.user.id} is not authorized to delete this reservation`,
+      });
     }
 
     await Reservation.deleteOne();
