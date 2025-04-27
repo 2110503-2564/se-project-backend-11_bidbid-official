@@ -42,6 +42,11 @@ app.get('/api-docs-json', (req, res) => {
   res.send(swaggerSpec);
 });
 
+// Test JEST HELLO
+app.get('/api/v1/hello', (req, res) => {
+  res.status(200).json({ message: 'Hello from the API!' });
+});
+
 // Server
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`));
@@ -51,3 +56,6 @@ process.on('unhandledRejection', (err, promise) => {
   console.log(`Error: ${err.message}`);
   server.close(() => process.exit(1));
 });
+
+//Test JEST HELLO
+module.exports = {app, server};
