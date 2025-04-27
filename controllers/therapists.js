@@ -202,7 +202,8 @@ exports.rejectTherapist = async (req, res, next) => {
     }
 
     therapist.state = "rejected";
-
+    therapist.comment = req.body.comment || "";
+    
     await therapist.save();
 
     res
