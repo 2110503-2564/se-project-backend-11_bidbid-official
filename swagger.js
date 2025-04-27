@@ -16,6 +16,13 @@ const options = {
       }
     ],
     components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      },
       schemas: {
         RegisterRequest: {
           type: 'object',
@@ -40,8 +47,8 @@ const options = {
         LoginRequest: {
           type: 'object',
           properties: {
-            email: { type: 'string', format: 'email', example: 'johndoe@gmail.com' },
-            password: { type: 'string', format: 'password', example: '12345678' }
+            email: { type: 'string', format: 'email', example: 'john@example.com' },
+            password: { type: 'string', format: 'password', example: 'P@ssw0rd' }
           },
           required: ['email', 'password']
         },
@@ -93,6 +100,7 @@ const options = {
             _id: { type: 'string', example: '60d0fe4f5311236168a109cd' },
             name: { type: 'string', example: 'Relax Spa Downtown' },
             address: { type: 'string', example: '123 Spa St, Bangkok' },
+            priceRange : { type: 'string', example: '400' },
             phoneNumber: { type: 'string', example: '+6621234567' },
             openTime: { type: 'string', example: '09:00' },
             closeTime: { type: 'string', example: '18:00' },
@@ -137,11 +145,35 @@ const options = {
           }
         }
       }
-    }
+    },
+    security: [
+      {
+        bearerAuth: []
+      }
+    ]
   },
   apis: ['./routes/*.js']
 };
 
 const swaggerSpec = swaggerJsdoc(options);
 
-module.exports = { swaggerUi, swaggerSpec };
+//auto authorize (didn't sure abt this part yet)
+const swaggerUiOptions = {
+  swaggerOptions: {
+    authAction: {
+      bearerAuth: {
+        name: "bearerAuth",
+        schema: {
+          type: "http",
+          in: "header",
+          name: "Authorization",
+          scheme: "bearer",
+          bearerFormat: "JWT"
+        },
+        value: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YmYyYzRhYmUwZjNjZWFmNmJkYWM3NiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc0NTc3MTU3NiwiZXhwIjoxNzQ4MzYzNTc2fQ.BJP8mGmCTHqYM9gJPpaN_ZmZRzLH_r0oQYz2bXKquEE"
+      }
+    }
+  }
+};
+
+module.exports = { swaggerUi, swaggerSpec, swaggerUiOptions };
