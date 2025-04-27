@@ -9,8 +9,12 @@ const {
   verifyTherapist,
   rejectTherapist,
   removeTherapist,
-  getTherapistAppointments,
   getTherapistReservations,
+  addUnavailableTimeSlot,
+  getUnavailableTimeSlots,
+  deleteUnavailableTimeSlot,
+  updateUnavailableTimeSlot,
+  getAvailableTherapists,
 } = require("../controllers/therapists");
 
 const router = express.Router();
@@ -41,6 +45,18 @@ router.route("/")
 router
   .route("/me/reservations")
   .get(protect, authorize("therapist"), getTherapistReservations);
+
+router
+  .route("/:id/unavailable-times")
+  .post(protect, authorize("admin"), addUnavailableTimeSlot)
+  .get(protect, authorize("admin"), getUnavailableTimeSlots);
+
+router
+  .route("/:id/unavailable-times/:slotId")
+  .put(protect, authorize("admin"), updateUnavailableTimeSlot)
+  .delete(protect, authorize("admin"), deleteUnavailableTimeSlot);
+
+  router.route("/available").get(getAvailableTherapists);
 
 router
   .route("/:id")

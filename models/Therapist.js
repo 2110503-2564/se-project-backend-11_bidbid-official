@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const UnavailableTimeSlotSchema = new mongoose.Schema({
+  day: { type: String, required: true }, // e.g., "Monday"
+  startTime: { type: String, required: true }, // e.g., "09:00"
+  endTime: { type: String, required: true }, // e.g., "17:00"
+});
+
 const TherapistSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -49,6 +55,7 @@ const TherapistSchema = new mongoose.Schema({
     type: [String],
     default: [],
   },
+  UnavailableTimeSlot: [UnavailableTimeSlotSchema],
   createdAt: {
     type: Date,
     default: Date.now,
