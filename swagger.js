@@ -40,8 +40,8 @@ const options = {
         LoginRequest: {
           type: 'object',
           properties: {
-            email: { type: 'string', format: 'email', example: 'john@example.com' },
-            password: { type: 'string', format: 'password', example: 'P@ssw0rd' }
+            email: { type: 'string', format: 'email', example: 'johndoe@gmail.com' },
+            password: { type: 'string', format: 'password', example: '12345678' }
           },
           required: ['email', 'password']
         },

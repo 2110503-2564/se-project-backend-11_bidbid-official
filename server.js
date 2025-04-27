@@ -4,7 +4,6 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
 dotenv.config({path: './config/config.env'});
-
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
 const { swaggerUi, swaggerSpec } = require('./swagger');
@@ -20,6 +19,21 @@ const app=express();
 app.use (cookieParser());
 
 app.use (express.json());
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+
+
 // edit
 app.use(cors({
   origin: function (origin, callback) {
@@ -32,7 +46,7 @@ app.use(cors({
   credentials: true
 }));
 // app.use(cors());
-
+app.use(cors(corsOptions));
 const auth = require('./routes/auth');
 const reservations = require('./routes/reservations');
 const massageShops = require('./routes/massageShops');
@@ -66,7 +80,6 @@ const swaggerOptions={
     apis:['./routes/*.js'],
   };
 const swaggerDocs=swaggerJsDoc(swaggerOptions);
-app.use('/api-docs',swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 process.on('unhandledRejection', (err, promise) => {
