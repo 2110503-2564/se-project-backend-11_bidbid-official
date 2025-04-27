@@ -3,13 +3,11 @@ const cors = require('cors')
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
-const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUI = require('swagger-ui-express');
 dotenv.config({path: './config/config.env'});
 
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
-
+const { swaggerUi, swaggerSpec } = require('./swagger');
 const allowedOrigins = [
   "http://localhost:3000",
   "https://fe-project-2024-2-may-i-scan.vercel.app"
@@ -57,7 +55,7 @@ const swaggerOptions={
       info: {
       title: 'Library API',
       version: '1.0.0',
-      description: 'Car Booking API'
+      description: 'Massageshop API'
       },
       servers: [
         {
@@ -69,7 +67,7 @@ const swaggerOptions={
   };
 const swaggerDocs=swaggerJsDoc(swaggerOptions);
 app.use('/api-docs',swaggerUI.serve, swaggerUI.setup(swaggerDocs));
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 process.on('unhandledRejection', (err, promise) => {
     console.log(`Error: ${err.message}`);
