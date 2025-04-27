@@ -76,12 +76,10 @@ exports.updateTherapist = async (req, res, next) => {
     const isAdmin = req.user.role === "admin";
 
     if (!isOwner && !isAdmin) {
-      return res
-        .status(403)
-        .json({
-          success: false,
-          message: "Not authorized to update this profile",
-        });
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to update this profile",
+      });
     }
 
     const updates = { ...req.body };
@@ -113,6 +111,7 @@ exports.updateTherapist = async (req, res, next) => {
       "massageShopID",
       "massageShop_name",
       "state",
+      "comment",
     ];
 
     allowedTherapistFields.forEach((field) => {
@@ -251,7 +250,29 @@ exports.getVerifiedTherapists = async (req, res, next) => {
       therapists: verifiedTherapists,
     });
   } catch (err) {
-    console.error("Get pending therapists error:", err);
+    console.error("Get verified therapists error:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Error fetching pending therapists" });
+  }
+};
+
+
+// @desc    Get all rejected therapist profiles
+// @route   GET /api/v1/therapists/rejected
+// @access  Private (admin only)
+exports.getRejectedTherapists = async (req, res, next) => {
+  try {
+    const rejectedTherapists = await Therapist.find({
+      state: "rejected",
+    }).populate("user");
+
+    res.status(200).json({
+      success: true,
+      therapists: rejectedTherapists,
+    });
+  } catch (err) {
+    console.error("Get rejected therapists error:", err);
     res
       .status(500)
       .json({ success: false, message: "Error fetching pending therapists" });
@@ -337,12 +358,16 @@ exports.removeTherapist = async (req, res, next) => {
 exports.getTherapistReservations = async (req, res, next) => {
   try {
     if (req.user.role !== "therapist") {
-      return res.status(403).json({ success: false, message: "Not authorized" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Not authorized" });
     }
     // find this therapist profile
     const therapist = await Therapist.findOne({ user: req.user.id });
     if (!therapist) {
-      return res.status(404).json({ success: false, message: "Profile not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Profile not found" });
     }
     // pull their reservations, populating nested refs
     const reservations = await Reservation.find({ therapist: therapist._id })
@@ -358,4 +383,3 @@ exports.getTherapistReservations = async (req, res, next) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
-

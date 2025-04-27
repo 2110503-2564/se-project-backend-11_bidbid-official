@@ -3,6 +3,7 @@ const {
   getTherapist,
   getTherapists,
   getVerifiedTherapists,
+  getRejectedTherapists,
   updateTherapist,
   getPendingTherapists,
   verifyTherapist,
@@ -29,6 +30,10 @@ router.route("/reject/:id")
 router
   .route("/verified")
   .get(getVerifiedTherapists);
+
+router
+  .route("/rejected")
+  .get(getRejectedTherapists);
 
 router.route("/")
     .get(protect, authorize("admin"), getTherapists);
