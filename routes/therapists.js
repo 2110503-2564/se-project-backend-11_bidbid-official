@@ -28,7 +28,7 @@ router.route("/reject/:id")
 
 router
   .route("/verified")
-  .get(protect, getVerifiedTherapists);
+  .get(getVerifiedTherapists);
 
 router.route("/")
     .get(protect, authorize("admin"), getTherapists);
