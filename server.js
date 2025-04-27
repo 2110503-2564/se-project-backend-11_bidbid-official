@@ -3,7 +3,8 @@ const cors = require('cors')
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const cookieParser = require('cookie-parser');
-
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
 dotenv.config({path: './config/config.env'});
 
 const swaggerJsDoc = require('swagger-jsdoc');

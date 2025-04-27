@@ -285,7 +285,7 @@ exports.removeTherapist = async (req, res, next) => {
       });
     }
 
-    await User.findByIdAndUpdate(therapistUserId, { role: "user" });
+    await User.findByIdAndDelete(therapistUserId);
 
     await Therapist.findByIdAndDelete(req.params.id);
 
