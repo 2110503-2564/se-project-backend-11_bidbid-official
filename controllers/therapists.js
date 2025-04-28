@@ -641,24 +641,18 @@ exports.getAvailableTherapists = async (req, res, next) => {
   try {
     const { date, day, startTime, endTime, massageShop } = req.query;
 
+    // Validate required parameters
+    if (!date || !day || !startTime || !endTime) {
+      return res.status(400).json({
+        success: false,
+        message: "date, day, startTime, and endTime are required",
+      });
+    }
+
     if (!massageShop) {
       return res.status(400).json({
         success: false,
         message: "massageShop is required",
-      });
-    }
-
-    if (!date) {
-      return res.status(400).json({
-        success: false,
-        message: "date is required",
-      });
-    }
-
-    if (!day || !startTime || !endTime) {
-      return res.status(400).json({
-        success: false,
-        message: "day, startTime, and endTime are required",
       });
     }
 
