@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test jest",
-    "test-coverage" : "jest --watchAll --coverage",
+    "test-coverage": "jest --watchAll --coverage",
     "dev": "nodemon start.js"
   },
   "repository": {
@@ -30,6 +30,7 @@
     "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "jest": "^29.7.0",
     "nodemon": "^3.1.9",
     "supertest": "^7.1.0"
