@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const UnavailableTimeSlotSchema = new mongoose.Schema({
+  date: { type: Date, required: true }, // e.g., "2023-10-01"
   day: { type: String, required: true }, // e.g., "Monday"
   startTime: { type: String, required: true }, // e.g., "09:00"
   endTime: { type: String, required: true }, // e.g., "17:00"

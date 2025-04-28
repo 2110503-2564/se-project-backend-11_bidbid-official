@@ -445,12 +445,12 @@ exports.addUnavailableTimeSlot = async (req, res, next) => {
 // @access  Private (admin only)
 exports.addUnavailableTimeSlot = async (req, res, next) => {
   try {
-    const { day, startTime, endTime } = req.body;
+    const { date, day, startTime, endTime } = req.body;
 
-    if (!day || !startTime || !endTime) {
+    if (!date || !day || !startTime || !endTime) {
       return res.status(400).json({
         success: false,
-        message: "day, startTime, and endTime are required",
+        message: "date, day, startTime, and endTime are required",
       });
     }
 
@@ -465,6 +465,7 @@ exports.addUnavailableTimeSlot = async (req, res, next) => {
     // Validate overlapping time slots
     const overlapping = therapist.UnavailableTimeSlot.some((slot) => {
       return (
+        slot.date === date &&
         slot.day === day &&
         ((startTime >= slot.startTime && startTime < slot.endTime) ||
           (endTime > slot.startTime && endTime <= slot.endTime) ||
@@ -479,7 +480,7 @@ exports.addUnavailableTimeSlot = async (req, res, next) => {
       });
     }
 
-    therapist.UnavailableTimeSlot.push({ day, startTime, endTime });
+    therapist.UnavailableTimeSlot.push({ date, day, startTime, endTime });
     await therapist.save();
 
     res.status(201).json({
@@ -500,7 +501,7 @@ exports.addUnavailableTimeSlot = async (req, res, next) => {
 // @access  Private (admin only)
 exports.updateUnavailableTimeSlot = async (req, res, next) => {
   try {
-    const { day, startTime, endTime } = req.body;
+    const { date, day, startTime, endTime } = req.body;
 
     const therapist = await Therapist.findById(req.params.id);
     if (!therapist) {
@@ -518,6 +519,7 @@ exports.updateUnavailableTimeSlot = async (req, res, next) => {
       });
     }
 
+    if (date) slot.date = date;
     if (day) slot.day = day;
     if (startTime) slot.startTime = startTime;
     if (endTime) slot.endTime = endTime;
@@ -542,24 +544,20 @@ exports.updateUnavailableTimeSlot = async (req, res, next) => {
 // @access  Private (admin only)
 exports.deleteUnavailableTimeSlot = async (req, res, next) => {
   try {
-    const therapist = await Therapist.findById(req.params.id);
+    const therapist = await Therapist.findByIdAndUpdate(
+      req.params.id,
+      {
+        $pull: { UnavailableTimeSlot: { _id: req.params.slotId } },
+      },
+      { new: true }
+    );
+
     if (!therapist) {
       return res.status(404).json({
         success: false,
         message: "Therapist not found",
       });
     }
-
-    const slot = therapist.UnavailableTimeSlot.id(req.params.slotId);
-    if (!slot) {
-      return res.status(404).json({
-        success: false,
-        message: "Unavailable time slot not found",
-      });
-    }
-
-    slot.remove();
-    await therapist.save();
 
     res.status(200).json({
       success: true,
@@ -574,6 +572,42 @@ exports.deleteUnavailableTimeSlot = async (req, res, next) => {
   }
 };
 
+// // @desc    Delete an unavailable time slot for a therapist
+// // @route   DELETE /api/v1/therapists/:id/unavailable-times/:slotId
+// // @access  Private (admin only)
+// exports.deleteUnavailableTimeSlot = async (req, res, next) => {
+//   try {
+//     const therapist = await Therapist.findById(req.params.id);
+//     if (!therapist) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Therapist not found",
+//       });
+//     }
+
+//     const slot = therapist.UnavailableTimeSlot.id(req.params.slotId);
+//     if (!slot) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Unavailable time slot not found",
+//       });
+//     }
+
+//     slot.remove();
+//     await therapist.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Unavailable time slot deleted",
+//     });
+//   } catch (err) {
+//     console.error("deleteUnavailableTimeSlot error:", err);
+//     res.status(500).json({
+//       success: false,
+//       message: "Server Error",
+//     });
+//   }
+// };
 // @desc    Get all unavailable time slots for a therapist
 // @route   GET /api/v1/therapists/:id/unavailable-times
 // @access  Private (admin only)
@@ -601,26 +635,27 @@ exports.getUnavailableTimeSlots = async (req, res, next) => {
 };
 
 // wait fe
-// @desc    Get therapists available on a specific day and time
-// @route   GET /api/v1/therapists/available?day=Monday&startTime=10:00&endTime=12:00
+// @desc    Get therapists available on a specific date, day, and time
+// @route   GET /api/v1/therapists/available?date=2025-05-01&day=Monday&startTime=10:00&endTime=12:00
 // @access  Public
 exports.getAvailableTherapists = async (req, res, next) => {
   try {
-    const { day, startTime, endTime } = req.query;
+    const { date, day, startTime, endTime } = req.query;
 
-    if (!day || !startTime || !endTime) {
+    if (!date || !day || !startTime || !endTime) {
       return res.status(400).json({
         success: false,
-        message: "day, startTime, and endTime are required",
+        message: "date, day, startTime, and endTime are required",
       });
     }
 
-    // Find therapists who are available on the given day and time
+    // Find therapists who are available on the given date, day, and time
     const therapists = await Therapist.find({
-      notAvailableDays: { $ne: day },
+      notAvailableDays: { $ne: day }, // Exclude therapists unavailable on the given day
       UnavailableTimeSlot: {
         $not: {
           $elemMatch: {
+            date: date,
             day: day,
             $or: [
               { startTime: { $lte: startTime }, endTime: { $gt: startTime } },
