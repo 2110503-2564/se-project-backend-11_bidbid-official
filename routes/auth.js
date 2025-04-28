@@ -12,11 +12,23 @@ router.get('/logout',logout);
 
 
 module.exports=router;
+
+//swagger
+
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: The authentication managing API
+ */
+
+
 /**
  * @swagger
  * /auth/register:
  *   post:
  *     summary: Register a new user (or therapist).
+ *     tags: [Auth]
  *     description: This endpoint allows users to register either as a regular user or therapist.
  *     requestBody:
  *       required: true
@@ -40,6 +52,7 @@ module.exports=router;
  * /auth/login:
  *   post:
  *     summary: User login
+ *     tags: [Auth]
  *     description: Login endpoint for returning a JWT token upon successful login.
  *     requestBody:
  *       required: true

@@ -21,12 +21,23 @@ router.route('/:id')
     .delete(protect, authorize('user', 'admin'), deleteReview);
 
 module.exports = router;
+
+// swagger
+
+/**
+ * @swagger
+ * tags:
+ *   name: Reviews
+ *   description: API for managing reviews for massage shops and therapists.
+ */
+
 /**
  * @swagger
  * /reviews:
  *   get:
  *     summary: Get all reviews
- *     description: Retrieve all reviews for therapists and massage shops.
+ *     tags: [Reviews]
+ *     description: Retrieve a list of all reviews.
  *     responses:
  *       200:
  *         description: List of reviews
@@ -40,20 +51,43 @@ module.exports = router;
 
 /**
  * @swagger
+ * /reviews:
+ *   post:
+ *     summary: Create a new review
+ *     tags: [Reviews]
+ *     description: Submit a new review for a massage shop or therapist. User must be logged in.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Review'
+ *     responses:
+ *       201:
+ *         description: Review created successfully
+ *       400:
+ *         description: Invalid input
+ */
+
+/**
+ * @swagger
  * /reviews/{id}:
  *   get:
- *     summary: Get a review by ID
- *     description: Retrieve details about a specific review.
+ *     summary: Get review by ID
+ *     tags: [Reviews]
+ *     description: Retrieve details of a specific review.
  *     parameters:
- *       - name: id
- *         in: path
- *         description: ID of the review
+ *       - in: path
+ *         name: id
  *         required: true
+ *         description: Review ID
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Review details
+ *         description: Review details retrieved
  *         content:
  *           application/json:
  *             schema:
@@ -64,10 +98,20 @@ module.exports = router;
 
 /**
  * @swagger
- * /reviews:
- *   post:
- *     summary: Create a review
- *     description: Submit a review for a massage shop or therapist.
+ * /reviews/{id}:
+ *   put:
+ *     summary: Update a review
+ *     tags: [Reviews]
+ *     description: Update an existing review. Only the review owner or an admin can edit.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Review ID
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -76,8 +120,32 @@ module.exports = router;
  *             $ref: '#/components/schemas/Review'
  *     responses:
  *       200:
- *         description: Review submitted successfully
+ *         description: Review updated successfully
  *       400:
- *         description: Invalid data
+ *         description: Invalid input
+ *       404:
+ *         description: Review not found
  */
 
+/**
+ * @swagger
+ * /reviews/{id}:
+ *   delete:
+ *     summary: Delete a review
+ *     tags: [Reviews]
+ *     description: Delete a review. Only the review owner or an admin can delete.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Review ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Review deleted successfully
+ *       404:
+ *         description: Review not found
+ */

@@ -21,12 +21,23 @@ router.route('/:id').get(getMassageShop).put(protect, authorize('admin'), update
 router.use('/:massageShopId/reviews', reviews);
 
 module.exports = router;
+
+//swagger
+
+/**
+ * @swagger
+ * tags:
+ *   name: Massage Shops
+ *   description: API for managing massage shops
+ */
+
 /**
  * @swagger
  * /massageShops:
  *   get:
  *     summary: Get all massage shops
- *     description: Retrieve a list of all massage shops available.
+ *     tags: [Massage Shops]
+ *     description: Public - Retrieve a list of all massage shops.
  *     responses:
  *       200:
  *         description: List of massage shops
@@ -42,13 +53,14 @@ module.exports = router;
  * @swagger
  * /massageShops/{id}:
  *   get:
- *     summary: Get massage shop by ID
- *     description: Retrieve detailed information about a specific massage shop.
+ *     summary: Get a massage shop by ID
+ *     tags: [Massage Shops]
+ *     description: Public - Retrieve detailed information about a specific massage shop.
  *     parameters:
- *       - name: id
- *         in: path
- *         description: ID of the massage shop
+ *       - in: path
+ *         name: id
  *         required: true
+ *         description: Massage shop ID
  *         schema:
  *           type: string
  *     responses:
@@ -66,8 +78,40 @@ module.exports = router;
  * @swagger
  * /massageShops:
  *   post:
- *     summary: Add a new massage shop
- *     description: Add a new massage shop to the system.
+ *     summary: Add a new massage shop (admin only)
+ *     tags: [Massage Shops]
+ *     description: Admin only - Add a new massage shop to the system.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/MassageShop'
+ *     responses:
+ *       201:
+ *         description: Massage shop added successfully
+ *       400:
+ *         description: Invalid input
+ */
+
+/**
+ * @swagger
+ * /massageShops/{id}:
+ *   put:
+ *     summary: Update an existing massage shop (admin only)
+ *     tags: [Massage Shops]
+ *     description: Admin only - Update the details of an existing massage shop.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Massage shop ID to update
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -76,8 +120,32 @@ module.exports = router;
  *             $ref: '#/components/schemas/MassageShop'
  *     responses:
  *       200:
- *         description: Massage shop added successfully
+ *         description: Massage shop updated successfully
  *       400:
- *         description: Invalid data
+ *         description: Invalid input
+ *       404:
+ *         description: Massage shop not found
  */
 
+/**
+ * @swagger
+ * /massageShops/{id}:
+ *   delete:
+ *     summary: Delete a massage shop (admin only)
+ *     tags: [Massage Shops]
+ *     description: Admin only - Delete a massage shop by ID.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Massage shop ID to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Massage shop deleted successfully
+ *       404:
+ *         description: Massage shop not found
+ */
