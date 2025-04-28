@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 
 dotenv.config({ path: './config/config.env' });
 
-const { swaggerUi, swaggerSpec, swaggerUiOptions } = require('./swagger');
+const { swaggerUi, swaggerSpec } = require('./swagger');
 
 connectDB();
 
@@ -34,7 +34,7 @@ app.use('/api/v1/reviews', reviews);
 app.use('/api/v1/therapists', therapists);
 
 // Swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerUiOptions));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Expose raw JSON for Import API (optional but good)
 app.get('/api-docs-json', (req, res) => {
