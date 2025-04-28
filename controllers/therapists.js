@@ -634,23 +634,36 @@ exports.getUnavailableTimeSlots = async (req, res, next) => {
   }
 };
 
-// wait fe
-// @desc    Get therapists available on a specific date, day, and time
-// @route   GET /api/v1/therapists/available?date=2025-05-01&day=Monday&startTime=10:00&endTime=12:00
+// @desc    Get therapists available on a specific date, day, time, and massage shop
+// @route   GET /api/v1/therapists/available?date=2025-05-01&day=Monday&startTime=10:00&endTime=12:00&massageShop=shopId
 // @access  Public
 exports.getAvailableTherapists = async (req, res, next) => {
   try {
-    const { date, day, startTime, endTime } = req.query;
+    const { date, day, startTime, endTime, massageShop } = req.query;
 
-    if (!date || !day || !startTime || !endTime) {
+    if (!massageShop) {
       return res.status(400).json({
         success: false,
-        message: "date, day, startTime, and endTime are required",
+        message: "massageShop is required",
       });
     }
 
-    // Find therapists who are available on the given date, day, and time
-    const therapists = await Therapist.find({
+    if (!date) {
+      return res.status(400).json({
+        success: false,
+        message: "date is required",
+      });
+    }
+
+    if (!day || !startTime || !endTime) {
+      return res.status(400).json({
+        success: false,
+        message: "day, startTime, and endTime are required",
+      });
+    }
+
+    // Build the query object
+    const query = {
       notAvailableDays: { $ne: day }, // Exclude therapists unavailable on the given day
       UnavailableTimeSlot: {
         $not: {
@@ -666,7 +679,11 @@ exports.getAvailableTherapists = async (req, res, next) => {
         },
       },
       state: "verified", // Only include verified therapists
-    }).populate("user");
+      "workingInfo.massageShopID": massageShop, // Filter by massage shop
+    };
+
+    // Find therapists matching the query
+    const therapists = await Therapist.find(query).populate("user");
 
     res.status(200).json({
       success: true,
