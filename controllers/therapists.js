@@ -384,3 +384,265 @@ exports.getTherapistReservations = async (req, res, next) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+// @desc    Add an unavailable time slot for a therapist
+// @route   POST /api/v1/therapists/:id/unavailable-times
+// @access  Private (admin only)
+exports.addUnavailableTimeSlot = async (req, res, next) => {
+  try {
+    const { day, startTime, endTime } = req.body;
+
+    if (!day || !startTime || !endTime) {
+      return res.status(400).json({
+        success: false,
+        message: "day, startTime, and endTime are required",
+      });
+    }
+
+    const therapist = await Therapist.findById(req.params.id);
+    if (!therapist) {
+      return res.status(404).json({
+        success: false,
+        message: "Therapist not found",
+      });
+    }
+
+    // Validate overlapping time slots
+    const overlapping = therapist.UnavailableTimeSlot.some((slot) => {
+      return (
+        slot.day === day &&
+        ((startTime >= slot.startTime && startTime < slot.endTime) ||
+          (endTime > slot.startTime && endTime <= slot.endTime) ||
+          (startTime <= slot.startTime && endTime >= slot.endTime))
+      );
+    });
+
+    if (overlapping) {
+      return res.status(400).json({
+        success: false,
+        message: "Time slot overlaps with an existing unavailable time slot",
+      });
+    }
+
+    therapist.UnavailableTimeSlot.push({ day, startTime, endTime });
+    await therapist.save();
+
+    res.status(201).json({
+      success: true,
+      data: therapist.UnavailableTimeSlot,
+    });
+  } catch (err) {
+    console.error("addUnavailableTimeSlot error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// @desc    Add an unavailable time slot for a therapist
+// @route   POST /api/v1/therapists/:id/unavailable-times
+// @access  Private (admin only)
+exports.addUnavailableTimeSlot = async (req, res, next) => {
+  try {
+    const { day, startTime, endTime } = req.body;
+
+    if (!day || !startTime || !endTime) {
+      return res.status(400).json({
+        success: false,
+        message: "day, startTime, and endTime are required",
+      });
+    }
+
+    const therapist = await Therapist.findById(req.params.id);
+    if (!therapist) {
+      return res.status(404).json({
+        success: false,
+        message: "Therapist not found",
+      });
+    }
+
+    // Validate overlapping time slots
+    const overlapping = therapist.UnavailableTimeSlot.some((slot) => {
+      return (
+        slot.day === day &&
+        ((startTime >= slot.startTime && startTime < slot.endTime) ||
+          (endTime > slot.startTime && endTime <= slot.endTime) ||
+          (startTime <= slot.startTime && endTime >= slot.endTime))
+      );
+    });
+
+    if (overlapping) {
+      return res.status(400).json({
+        success: false,
+        message: "Time slot overlaps with an existing unavailable time slot",
+      });
+    }
+
+    therapist.UnavailableTimeSlot.push({ day, startTime, endTime });
+    await therapist.save();
+
+    res.status(201).json({
+      success: true,
+      data: therapist.UnavailableTimeSlot,
+    });
+  } catch (err) {
+    console.error("addUnavailableTimeSlot error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// @desc    Update an unavailable time slot for a therapist
+// @route   PUT /api/v1/therapists/:id/unavailable-times/:slotId
+// @access  Private (admin only)
+exports.updateUnavailableTimeSlot = async (req, res, next) => {
+  try {
+    const { day, startTime, endTime } = req.body;
+
+    const therapist = await Therapist.findById(req.params.id);
+    if (!therapist) {
+      return res.status(404).json({
+        success: false,
+        message: "Therapist not found",
+      });
+    }
+
+    const slot = therapist.UnavailableTimeSlot.id(req.params.slotId);
+    if (!slot) {
+      return res.status(404).json({
+        success: false,
+        message: "Unavailable time slot not found",
+      });
+    }
+
+    if (day) slot.day = day;
+    if (startTime) slot.startTime = startTime;
+    if (endTime) slot.endTime = endTime;
+
+    await therapist.save();
+
+    res.status(200).json({
+      success: true,
+      data: therapist.UnavailableTimeSlot,
+    });
+  } catch (err) {
+    console.error("updateUnavailableTimeSlot error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// @desc    Delete an unavailable time slot for a therapist
+// @route   DELETE /api/v1/therapists/:id/unavailable-times/:slotId
+// @access  Private (admin only)
+exports.deleteUnavailableTimeSlot = async (req, res, next) => {
+  try {
+    const therapist = await Therapist.findById(req.params.id);
+    if (!therapist) {
+      return res.status(404).json({
+        success: false,
+        message: "Therapist not found",
+      });
+    }
+
+    const slot = therapist.UnavailableTimeSlot.id(req.params.slotId);
+    if (!slot) {
+      return res.status(404).json({
+        success: false,
+        message: "Unavailable time slot not found",
+      });
+    }
+
+    slot.remove();
+    await therapist.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Unavailable time slot deleted",
+    });
+  } catch (err) {
+    console.error("deleteUnavailableTimeSlot error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// @desc    Get all unavailable time slots for a therapist
+// @route   GET /api/v1/therapists/:id/unavailable-times
+// @access  Private (admin only)
+exports.getUnavailableTimeSlots = async (req, res, next) => {
+  try {
+    const therapist = await Therapist.findById(req.params.id);
+    if (!therapist) {
+      return res.status(404).json({
+        success: false,
+        message: "Therapist not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: therapist.UnavailableTimeSlot,
+    });
+  } catch (err) {
+    console.error("getUnavailableTimeSlots error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+// wait fe
+// @desc    Get therapists available on a specific day and time
+// @route   GET /api/v1/therapists/available?day=Monday&startTime=10:00&endTime=12:00
+// @access  Public
+exports.getAvailableTherapists = async (req, res, next) => {
+  try {
+    const { day, startTime, endTime } = req.query;
+
+    if (!day || !startTime || !endTime) {
+      return res.status(400).json({
+        success: false,
+        message: "day, startTime, and endTime are required",
+      });
+    }
+
+    // Find therapists who are available on the given day and time
+    const therapists = await Therapist.find({
+      notAvailableDays: { $ne: day },
+      UnavailableTimeSlot: {
+        $not: {
+          $elemMatch: {
+            day: day,
+            $or: [
+              { startTime: { $lte: startTime }, endTime: { $gt: startTime } },
+              { startTime: { $lt: endTime }, endTime: { $gte: endTime } },
+              { startTime: { $gte: startTime }, endTime: { $lte: endTime } },
+            ],
+          },
+        },
+      },
+      state: "verified", // Only include verified therapists
+    }).populate("user");
+
+    res.status(200).json({
+      success: true,
+      count: therapists.length,
+      data: therapists,
+    });
+  } catch (err) {
+    console.error("getAvailableTherapists error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
