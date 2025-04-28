@@ -390,61 +390,6 @@ exports.getTherapistReservations = async (req, res, next) => {
 // @access  Private (admin only)
 exports.addUnavailableTimeSlot = async (req, res, next) => {
   try {
-    const { day, startTime, endTime } = req.body;
-
-    if (!day || !startTime || !endTime) {
-      return res.status(400).json({
-        success: false,
-        message: "day, startTime, and endTime are required",
-      });
-    }
-
-    const therapist = await Therapist.findById(req.params.id);
-    if (!therapist) {
-      return res.status(404).json({
-        success: false,
-        message: "Therapist not found",
-      });
-    }
-
-    // Validate overlapping time slots
-    const overlapping = therapist.UnavailableTimeSlot.some((slot) => {
-      return (
-        slot.day === day &&
-        ((startTime >= slot.startTime && startTime < slot.endTime) ||
-          (endTime > slot.startTime && endTime <= slot.endTime) ||
-          (startTime <= slot.startTime && endTime >= slot.endTime))
-      );
-    });
-
-    if (overlapping) {
-      return res.status(400).json({
-        success: false,
-        message: "Time slot overlaps with an existing unavailable time slot",
-      });
-    }
-
-    therapist.UnavailableTimeSlot.push({ day, startTime, endTime });
-    await therapist.save();
-
-    res.status(201).json({
-      success: true,
-      data: therapist.UnavailableTimeSlot,
-    });
-  } catch (err) {
-    console.error("addUnavailableTimeSlot error:", err);
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
-  }
-};
-
-// @desc    Add an unavailable time slot for a therapist
-// @route   POST /api/v1/therapists/:id/unavailable-times
-// @access  Private (admin only)
-exports.addUnavailableTimeSlot = async (req, res, next) => {
-  try {
     const { date, day, startTime, endTime } = req.body;
 
     if (!date || !day || !startTime || !endTime) {
