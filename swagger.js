@@ -27,28 +27,28 @@ const options = {
         User: {
           type: 'object',
           properties: {
-            _id: { type: 'string', example: '67c01289ealb7f96967fe316' }, // User Doe
-            name: { type: 'string', example: 'User Doe' },
-            email: { type: 'string', format: 'email', example: 'userdoe@gmail.com' },
-            phoneNumber: { type: 'string', example: '1000000001' },
-            role: { type: 'string', enum: ['user', 'therapist', 'admin'], example: 'user' },
-            createdAt: { type: 'string', format: 'date-time', example: '2025-02-27T07:21:45.904Z' }
+            _id: { type: 'string', example: '680df6eeb1b5a38cc21b795f' },
+            name: { type: 'string', example: 'therapist verified99' },
+            email: { type: 'string', format: 'email', example: 'therapistverified99@gmail.com' },
+            phoneNumber: { type: 'string', example: '2100000099' },
+            role: { type: 'string', enum: ['user', 'therapist', 'admin'], example: 'therapist' },
+            createdAt: { type: 'string', format: 'date-time', example: '2025-04-27T09:20:46.164Z' }
           }
         },
         Therapist: {
           type: 'object',
           properties: {
-            _id: { type: 'string', example: '680df6568c6180695473fdcf' },
+            _id: { type: 'string', example: '680df6eeb1b5a38cc21b7961' },
             user: { $ref: '#/components/schemas/User' },
             gender: { type: 'string', example: 'Male' },
-            age: { type: 'string', example: '19' },
-            experience: { type: 'number', example: 1232 },
-            specialities: { type: 'string', example: 'dd' },
-            licenseNumber: { type: 'string', example: '00000102' },
+            age: { type: 'string', example: '18' },
+            experience: { type: 'number', example: 44 },
+            specialities: { type: 'string', example: 'rr' },
+            licenseNumber: { type: 'string', example: 'V001' },
             notAvailableDays: {
               type: 'array',
               items: { type: 'string' },
-              example: ['Monday', 'Wednesday', 'Friday']
+              example: ['Tuesday', 'Thursday']
             },
             workingInfo: {
               type: 'array',
@@ -60,9 +60,20 @@ const options = {
                 }
               }
             },
-            state: { type: 'string', enum: ['pending', 'verified', 'rejected'], example: 'pending' },
+            UnavailableTimeSlot: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  day: { type: 'string', example: 'Tuesday' },
+                  startTime: { type: 'string', example: '13:00' },
+                  endTime: { type: 'string', example: '15:00' }
+                }
+              }
+            },
+            state: { type: 'string', enum: ['pending', 'verified', 'rejected'], example: 'verified' },
             comment: { type: 'string', example: '' },
-            createdAt: { type: 'string', format: 'date-time', example: '2025-04-27T09:18:14.685Z' }
+            createdAt: { type: 'string', format: 'date-time', example: '2025-04-27T09:20:46.561Z' }
           }
         },
         MassageShop: {
@@ -75,7 +86,7 @@ const options = {
             phoneNumber: { type: 'string', example: '366-603-8362' },
             openTime: { type: 'string', example: '08.00' },
             closeTime: { type: 'string', example: '20.00' },
-            picture: { type: 'string', format: 'uri', example: 'https://drive.google.com/uc?export=download&id=12QnhAYaEenxBg5W45CPoXX' }
+            picture: { type: 'string', format: 'uri', example: 'https://drive.google.com/uc?export=download&id=12QnhAYaEenxBg5W45CPoXXXUMJwFn-lB' }
           }
         },
         Reservation: {
