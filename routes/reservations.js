@@ -53,7 +53,7 @@ module.exports = router;
 
 /**
  * @swagger
- * /reservations:
+ * /massageShops/{massageShopID}/reservations:
  *   post:
  *     summary: Create a new reservation
  *     tags: [Reservations]
