@@ -48,13 +48,13 @@ router
 
 router
   .route("/:id/unavailable-times")
-  .post(protect, authorize("admin"), addUnavailableTimeSlot)
+  .post(protect, authorize('admin', 'user'),addUnavailableTimeSlot)
   .get(protect, authorize("admin"), getUnavailableTimeSlots);
 
 router
   .route("/:id/unavailable-times/:slotId")
   .put(protect, authorize("admin"), updateUnavailableTimeSlot)
-  .delete(protect, authorize("admin"), deleteUnavailableTimeSlot);
+  .delete(protect, authorize("admin", "user"), deleteUnavailableTimeSlot);
 
   router.route("/available").get(getAvailableTherapists);
 
