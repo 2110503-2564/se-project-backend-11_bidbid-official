@@ -53,13 +53,20 @@ module.exports = router;
 
 /**
  * @swagger
- * /massageShops/{massageShopID}/reservations:
+ * /massageShops/{massageShopId}/reservations:
  *   post:
  *     summary: Create a new reservation
  *     tags: [Reservations]
  *     description: Create a new reservation for a massage service. Requires authenticated user.
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: massageShopId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the massage shop
  *     requestBody:
  *       required: true
  *       content:
@@ -72,6 +79,7 @@ module.exports = router;
  *       400:
  *         description: Invalid input
  */
+
 
 /**
  * @swagger
