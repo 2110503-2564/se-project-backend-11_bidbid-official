@@ -92,15 +92,12 @@ const options = {
         Reservation: {
           type: 'object',
           properties: {
-            _id: { type: 'string', example: '680fa180b1be8c61afc59bdd' },
-            massageShop: { $ref: '#/components/schemas/MassageShop' },
-            user: { $ref: '#/components/schemas/User' },
-            date: { type: 'string', format: 'date', example: '2025-04-28' },
-            time: { type: 'string', example: '13:00' },
-            duration: { type: 'number', example: 0.5 },
+            user: { type: 'string', example: '67c01289ea1bf796967fe316' },
+            date: { type: 'string', format: 'date-time', example: '2025-04-29T17:00:00.000Z' },
+            time: { type: 'string', example: '9:00' },
+            duration: { type: 'string', example: '0.5' },
             massageProgram: { type: 'string', example: 'footMassage' },
-            therapist: { $ref: '#/components/schemas/Therapist' },
-            createdAt: { type: 'string', format: 'date-time', example: '2025-04-28T15:40:48.106Z' }
+            therapist: { type: 'string', example: '67fe2e4b8cfd826e3c04cfda' }
           }
         },
         Review: {
