@@ -442,11 +442,18 @@ exports.addUnavailableTimeSlot = async (req, res, next) => {
 };
 
 // @desc    Update an unavailable time slot for a therapist
-// @route   PUT /api/v1/therapists/:id/unavailable-times/:slotId
+// @route   PUT /api/v1/therapists/:id/unavailable-times
 // @access  Private (admin only)
 exports.updateUnavailableTimeSlot = async (req, res, next) => {
   try {
-    const { date, day, startTime, endTime } = req.body;
+    const { date, startTime, endTime, newDate, newDay, newStartTime, newEndTime } = req.body;
+
+    if (!date || !startTime || !endTime) {
+      return res.status(400).json({
+        success: false,
+        message: "date, day, startTime, and endTime are required",
+      });
+    }
 
     const therapist = await Therapist.findById(req.params.id);
     if (!therapist) {
@@ -456,7 +463,14 @@ exports.updateUnavailableTimeSlot = async (req, res, next) => {
       });
     }
 
-    const slot = therapist.UnavailableTimeSlot.id(req.params.slotId);
+    // Find the time slot to update
+    const slot = therapist.UnavailableTimeSlot.find(
+      (slot) =>
+        slot.date === date &&
+        slot.startTime === startTime &&
+        slot.endTime === endTime
+    );
+
     if (!slot) {
       return res.status(404).json({
         success: false,
@@ -464,10 +478,11 @@ exports.updateUnavailableTimeSlot = async (req, res, next) => {
       });
     }
 
-    if (date) slot.date = date;
-    if (day) slot.day = day;
-    if (startTime) slot.startTime = startTime;
-    if (endTime) slot.endTime = endTime;
+    // Update the time slot
+    if (newDate) slot.date = newDate;
+    if (newDay) slot.day = newDay;
+    if (newStartTime) slot.startTime = newStartTime;
+    if (newEndTime) slot.endTime = newEndTime;
 
     await therapist.save();
 
@@ -485,24 +500,45 @@ exports.updateUnavailableTimeSlot = async (req, res, next) => {
 };
 
 // @desc    Delete an unavailable time slot for a therapist
-// @route   DELETE /api/v1/therapists/:id/unavailable-times/:slotId
+// @route   DELETE /api/v1/therapists/:id/unavailable-times
 // @access  Private (admin only)
 exports.deleteUnavailableTimeSlot = async (req, res, next) => {
   try {
-    const therapist = await Therapist.findByIdAndUpdate(
-      req.params.id,
-      {
-        $pull: { UnavailableTimeSlot: { _id: req.params.slotId } },
-      },
-      { new: true }
-    );
+    const { date, startTime, endTime } = req.body;
 
+    if (!date || !startTime || !endTime) {
+      return res.status(400).json({
+        success: false,
+        message: "date, startTime, and endTime are required",
+      });
+    }
+
+    const therapist = await Therapist.findById(req.params.id);
     if (!therapist) {
       return res.status(404).json({
         success: false,
         message: "Therapist not found",
       });
     }
+
+    // Find the index of the time slot to delete
+    const slotIndex = therapist.UnavailableTimeSlot.findIndex(
+      (slot) =>
+        slot.date === date &&
+        slot.startTime === startTime &&
+        slot.endTime === endTime
+    );
+
+    if (slotIndex === -1) {
+      return res.status(404).json({
+        success: false,
+        message: "Unavailable time slot not found",
+      });
+    }
+
+    // Remove the time slot
+    therapist.UnavailableTimeSlot.splice(slotIndex, 1);
+    await therapist.save();
 
     res.status(200).json({
       success: true,
@@ -517,42 +553,6 @@ exports.deleteUnavailableTimeSlot = async (req, res, next) => {
   }
 };
 
-// // @desc    Delete an unavailable time slot for a therapist
-// // @route   DELETE /api/v1/therapists/:id/unavailable-times/:slotId
-// // @access  Private (admin only)
-// exports.deleteUnavailableTimeSlot = async (req, res, next) => {
-//   try {
-//     const therapist = await Therapist.findById(req.params.id);
-//     if (!therapist) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Therapist not found",
-//       });
-//     }
-
-//     const slot = therapist.UnavailableTimeSlot.id(req.params.slotId);
-//     if (!slot) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Unavailable time slot not found",
-//       });
-//     }
-
-//     slot.remove();
-//     await therapist.save();
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Unavailable time slot deleted",
-//     });
-//   } catch (err) {
-//     console.error("deleteUnavailableTimeSlot error:", err);
-//     res.status(500).json({
-//       success: false,
-//       message: "Server Error",
-//     });
-//   }
-// };
 // @desc    Get all unavailable time slots for a therapist
 // @route   GET /api/v1/therapists/:id/unavailable-times
 // @access  Private (admin only)

@@ -49,12 +49,11 @@ router
 router
   .route("/:id/unavailable-times")
   .post(protect, authorize('admin', 'user'),addUnavailableTimeSlot)
-  .get(protect, authorize("admin"), getUnavailableTimeSlots);
-
-router
-  .route("/:id/unavailable-times/:slotId")
-  .put(protect, authorize("admin"), updateUnavailableTimeSlot)
+  .get(protect, authorize("admin"), getUnavailableTimeSlots)
+  .put(protect, authorize("admin", 'user'), updateUnavailableTimeSlot)
   .delete(protect, authorize("admin", "user"), deleteUnavailableTimeSlot);
+
+
 
   router.route("/available").get(getAvailableTherapists);
 
