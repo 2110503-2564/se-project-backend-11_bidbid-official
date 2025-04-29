@@ -196,29 +196,73 @@
 <a name='L131'></a><a href='#L131'>131</a>
 <a name='L132'></a><a href='#L132'>132</a>
 <a name='L133'></a><a href='#L133'>133</a>
-<a name='L134'></a><a href='#L134'>134</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L134'></a><a href='#L134'>134</a>
+<a name='L135'></a><a href='#L135'>135</a>
+<a name='L136'></a><a href='#L136'>136</a>
+<a name='L137'></a><a href='#L137'>137</a>
+<a name='L138'></a><a href='#L138'>138</a>
+<a name='L139'></a><a href='#L139'>139</a>
+<a name='L140'></a><a href='#L140'>140</a>
+<a name='L141'></a><a href='#L141'>141</a>
+<a name='L142'></a><a href='#L142'>142</a>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a>
+<a name='L145'></a><a href='#L145'>145</a>
+<a name='L146'></a><a href='#L146'>146</a>
+<a name='L147'></a><a href='#L147'>147</a>
+<a name='L148'></a><a href='#L148'>148</a>
+<a name='L149'></a><a href='#L149'>149</a>
+<a name='L150'></a><a href='#L150'>150</a>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -352,12 +396,25 @@ router.route('/:id')
     .delete(protect, authorize('admin', 'user'), deleteReservation);
 &nbsp;
 module.exports = router;
+&nbsp;
+// swagger
+&nbsp;
+/**
+ * @swagger
+ * tags:
+ *   name: Reservations
+ *   description: API for managing massage reservations between users and therapists.
+ */
+&nbsp;
 /**
  * @swagger
  * /reservations:
  *   get:
  *     summary: Get all reservations
- *     description: Get a list of all reservations.
+ *     tags: [Reservations]
+ *     description: Retrieve a list of all reservations. Admin can see all; users see their own reservations.
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of reservations
@@ -371,20 +428,45 @@ module.exports = router;
 &nbsp;
 /**
  * @swagger
+ * /massageShops/{massageShopID}/reservations:
+ *   post:
+ *     summary: Create a new reservation
+ *     tags: [Reservations]
+ *     description: Create a new reservation for a massage service. Requires authenticated user.
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Reservation'
+ *     responses:
+ *       201:
+ *         description: Reservation created successfully
+ *       400:
+ *         description: Invalid input
+ */
+&nbsp;
+/**
+ * @swagger
  * /reservations/{id}:
  *   get:
  *     summary: Get reservation by ID
- *     description: Retrieve detailed information about a specific reservation.
+ *     tags: [Reservations]
+ *     description: Retrieve details of a specific reservation.
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - name: id
- *         in: path
- *         description: ID of the reservation
+ *       - in: path
+ *         name: id
  *         required: true
+ *         description: Reservation ID
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Reservation details
+ *         description: Reservation details retrieved
  *         content:
  *           application/json:
  *             schema:
@@ -395,10 +477,20 @@ module.exports = router;
 &nbsp;
 /**
  * @swagger
- * /reservations:
- *   post:
- *     summary: Create a reservation
- *     description: Create a new reservation for a user and therapist.
+ * /reservations/{id}:
+ *   put:
+ *     summary: Update an existing reservation
+ *     tags: [Reservations]
+ *     description: Update details of a reservation. Users can update their own reservations; admin can update all.
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Reservation ID
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -407,37 +499,9 @@ module.exports = router;
  *             $ref: '#/components/schemas/Reservation'
  *     responses:
  *       200:
- *         description: Reservation created successfully
+ *         description: Reservation updated successfully
  *       400:
- *         description: Invalid input data
- */
-&nbsp;
-/**
- * @swagger
- * /reservations/{id}:
- *   put:
- *     summary: Update reservation status
- *     description: Change the status (pending, confirmed, cancelled) of an existing reservation.
- *     parameters:
- *       - name: id
- *         in: path
- *         description: ID of the reservation
- *         required: true
- *         schema:
- *           type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               status:
- *                 type: string
- *                 enum: ['pending', 'confirmed', 'completed', 'cancelled']
- *     responses:
- *       200:
- *         description: Reservation status updated
+ *         description: Invalid input
  *       404:
  *         description: Reservation not found
  */
@@ -446,22 +510,24 @@ module.exports = router;
  * @swagger
  * /reservations/{id}:
  *   delete:
- *     summary: Cancel a reservation
- *     description: Delete an existing reservation.
+ *     summary: Delete (cancel) a reservation
+ *     tags: [Reservations]
+ *     description: Cancel an existing reservation. Users can cancel their own reservations; admin can cancel any.
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
- *       - name: id
- *         in: path
- *         description: ID of the reservation
+ *       - in: path
+ *         name: id
  *         required: true
+ *         description: Reservation ID
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Reservation cancelled
+ *         description: Reservation cancelled successfully
  *       404:
  *         description: Reservation not found
  */
-&nbsp;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -469,7 +535,7 @@ module.exports = router;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-04-27T16:06:10.388Z
+                at 2025-04-29T03:54:37.906Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

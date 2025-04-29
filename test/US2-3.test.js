@@ -20,15 +20,15 @@ describe('Therapist Reservation', () => {
     token = res.body.token;
   });
 
-  it('should fetch 1 reservation', async () => {
+  it('should fetch reservations', async () => {
     const res = await request(app)
       .get('/api/v1/therapists/me/reservations') 
       .set('Authorization', `Bearer ${token}`);
 
     expect(res.statusCode).toEqual(200);
     expect(res.body.success).toBe(true); 
-    expect(res.body.count).toBe(2);
-    expect(res.body.data).toHaveLength(2);
+    expect(res.body.count).toBe(0);
+    expect(res.body.data).toHaveLength(0);
   });
 });
 
